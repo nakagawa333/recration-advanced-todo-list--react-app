@@ -27,7 +27,7 @@ app.listen(PORT, () => {
 
         let methodOptions = {
             calendarId: GOOGLE_CALENDAR_ID,
-            timeMin: new Date().toISOString(),
+            timeMin: new Date(2019, 5 - 1, 5, 9, 0, 40).toISOString(),
             maxResults: 2500,
             singleEvents: true,
             orderBy: 'startTime'          
