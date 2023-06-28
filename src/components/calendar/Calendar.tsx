@@ -5,7 +5,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/ja';
-
+import '../../index.css';
 
 function Calendar(){
     //日本の時刻に変換
@@ -33,17 +33,55 @@ function Calendar(){
             isTrue = false;
         }
     }
+
+    const options = {era: 'long'};
+    //年号
+    let yearNum:string = now.toDate().toLocaleString( "ja-JP-u-ca-japanese" ,{ era : "short" }).split("/")[0] + "年";
+
+    /**
+     * 色を取得する
+     * @param dayjs 
+     * @returns 色
+     */
+    const getColor = (dayjs:Dayjs) => {
+        //土曜日
+        if(dayjs.day() === 6){
+            return "aqua";
+        }
+
+        //日曜日
+        if(dayjs.day() === 0){
+            return "red";
+        }
+
+        //祝日
+
+        //それ以外
+        return "black";
+    }
+
     return(
+        <>
+        <div style={{display:"flex"}}>
+            <div>
+              <p>{yearNum}</p>
+            </div>
+
+            <div style={{display:"flex",margin:"auto"}}>
+                <p>{startDay.year()}年</p>
+                <p style={{marginLeft:"10px"}}>{startDay.month() + 1}月</p>                
+            </div>
+        </div>
         <TableContainer style={{marginBottom:"30px"}}>
             <Table>
                 <TableRow>
-                     <TableCell>日</TableCell>
+                     <TableCell style={{color:"red"}}>日</TableCell>
                      <TableCell>月</TableCell>
                      <TableCell>火</TableCell>
                      <TableCell>水</TableCell>
                      <TableCell>木</TableCell>
                      <TableCell>金</TableCell>
-                     <TableCell>土</TableCell>
+                     <TableCell style={{color:"aqua"}}>土</TableCell>
                 </TableRow>
                 {
                   calendars.map((arr:any,index:number) => {
@@ -52,7 +90,7 @@ function Calendar(){
                               {
                                 arr.map((value:Dayjs,j:number) => {
                                     return (
-                                        <TableCell key={j}>{value.date()}</TableCell>
+                                        <TableCell style={{color:getColor(value)}} key={j}>{value.date()}</TableCell>
                                     )
                                 })
                               }
@@ -62,6 +100,7 @@ function Calendar(){
                 }
             </Table>
         </TableContainer>
+        </>
     )
 }
 

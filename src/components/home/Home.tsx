@@ -1,7 +1,6 @@
 import { Container } from "@mui/material";
 import ContentHeader from "../content/ContentHeader"
 import Header from "../shared/Header"
-import { DateRangeCalendar } from '@mui/x-date-pickers-pro';
 import Calendar from "../calendar/Calendar";
 
 function Home(){
