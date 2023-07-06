@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, Menu, MenuItem, Select } from "@mui/material"
+import { Box, FormControl, InputLabel, Menu, MenuItem, Select } from "@mui/material"
 
 type Props = {
     contentTitle:string,
@@ -8,10 +8,10 @@ type Props = {
 
 function ContentHeader(props:Props){
     return(
-        <div style={{display:"flex"}}>
-            <div>
+        <Box style={{display:"flex"}}>
+            <Box>
              <p style={{fontSize:"20px"}}>{props.contentTitle}</p>
-            </div>
+            </Box>
             <FormControl style={{marginLeft:"auto",minWidth:"200px"}}>
                 <InputLabel id="demo-simple-select-label">{props.filtername}</InputLabel>
                 <Select 
@@ -32,7 +32,7 @@ function ContentHeader(props:Props){
             </FormControl>
 
 
-        </div>
+        </Box>
     )
 }
 

@@ -132,10 +132,10 @@ function Calendar(props:Props){
     return(
         <>
         <Box>
-            <div style={{display:"flex"}}>
-                <div>
+            <Box style={{display:"flex"}}>
+                <Box>
                 <p>{yearNum}</p>
-                </div>
+                </Box>
 
                 <Box style={{display:"flex",margin:"auto"}}>
                     <Box style={{marginTop:"15px",marginRight:"20px"}}>
@@ -156,7 +156,7 @@ function Calendar(props:Props){
                 {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                  <DateCalendar />
                 </LocalizationProvider> */}
-            </div>
+            </Box>
         </Box>
 
         <Box>

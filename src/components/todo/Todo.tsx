@@ -12,7 +12,7 @@ function Todo(props:Props){
             {
                 props.schedules.map((schedule:any) => {
                     return(
-                        <div>
+                        <Box>
                             <Card variant="outlined" sx={{maxWidth:200}}>
                                 <p>{schedule.summary}</p>
                                 <p>ステータス:{schedule.status}</p>
@@ -26,7 +26,7 @@ function Todo(props:Props){
                                   {schedule.description}
                                 </textarea>
                             </Card>
-                        </div>
+                        </Box>
                     )
                 })
             } 
