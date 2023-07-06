@@ -7,9 +7,13 @@ import TableRow from '@mui/material/TableRow';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/ja';
 import '../../index.css';
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Set } from 'typescript';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useCalendarsEvent } from '../../hooks/CalendarsEvent';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+
 
 type Props = {
     schedules:any[]
@@ -133,13 +137,25 @@ function Calendar(props:Props){
                 <p>{yearNum}</p>
                 </div>
 
-                <p onClick={() => getPreAfterDayInfo(1)}>前</p>
-                <div style={{display:"flex",margin:"auto"}}>
+                <Box style={{display:"flex",margin:"auto"}}>
+                    <Box style={{marginTop:"15px",marginRight:"20px"}}>
+                    <ArrowBackIcon 
+                    onClick={() => getPreAfterDayInfo(1)}></ArrowBackIcon>
+                    </Box>
+                    
                     <p>{startDay.year()}年</p>
-                    <p style={{marginLeft:"10px"}}>{targetBeginMonth.month() + 1}月</p>                
-                </div>
+                    <p style={{marginLeft:"10px"}}>{targetBeginMonth.month() + 1}月</p>
 
-                <p onClick={() => getPreAfterDayInfo(2)}>次</p>
+                    <Box style={{marginTop:"15px",marginLeft:"20px"}}>
+                        <ArrowForwardIcon 
+                        onClick={() => getPreAfterDayInfo(2)}>
+                        </ArrowForwardIcon>
+                    </Box>  
+                </Box>
+
+                {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+                 <DateCalendar />
+                </LocalizationProvider> */}
             </div>
         </Box>
 
