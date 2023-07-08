@@ -46,7 +46,7 @@ function Calendar(props:Props){
         //現在の時刻データを取得する
         getNowDayInfo();
         Promise.all(([calendarsEvent.getSchedules(startDay,endDay),
-            calendarsEvent.getPublicHoliday(now)]))
+            calendarsEvent.getPublicHoliday(now.year())]))
         .then((values:any) => {
             console.info("処理に成功しました");
         })

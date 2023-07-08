@@ -4,7 +4,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 type CalendarsEvent = {
     getSchedules: (startDay:Dayjs,endDay:Dayjs) => void;
-    getPublicHoliday: (day:Dayjs) => void;
+    getPublicHoliday: (year:number) => void;
     getColor: (day:Dayjs,publicHoliday:any) => string;
     getBackGroudColor: (day:Dayjs,now:Dayjs) => string;
 }
@@ -49,11 +49,15 @@ export const useCalendarsEvent = (
         }
     }
 
-    const getPublicHoliday = async(day:Dayjs) => {
+    /**
+     * 対象年に対する祝日の情報を取得する
+     * @param year 年
+     */
+    const getPublicHoliday = async(year:number) => {
         try{
             let axiosRequestConfig:AxiosRequestConfig = {
                 params:{
-                    year:day.year()
+                    year:year
                 }                
             }
 
