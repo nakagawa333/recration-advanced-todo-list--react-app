@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useLayoutEffect, useMemo, useState } from 'react';
-import { Box, TableBody } from '@mui/material';
+import { Box, TableBody, makeStyles } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
@@ -161,15 +161,15 @@ function Calendar(props:Props){
 
         <Box>
             <TableContainer style={{marginBottom:"30px"}}>
-                <Table>
+                <Table size="medium" style={{border: '1px solid rgba(224, 224, 224, 1)',minHeight:"450px"}}>
                     <TableRow>
-                        <TableCell style={{color:"red"}}>日</TableCell>
-                        <TableCell>月</TableCell>
-                        <TableCell>火</TableCell>
-                        <TableCell>水</TableCell>
-                        <TableCell>木</TableCell>
-                        <TableCell>金</TableCell>
-                        <TableCell style={{color:"aqua"}}>土</TableCell>
+                        <TableCell style={{color:"red",borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">日</TableCell>
+                        <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">月</TableCell>
+                        <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">火</TableCell>
+                        <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">水</TableCell>
+                        <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">木</TableCell>
+                        <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">金</TableCell>
+                        <TableCell style={{color:"aqua",borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">土</TableCell>
                     </TableRow>
                     {
                     calendars && calendars.map((arr:any,index:number) => {
@@ -179,8 +179,14 @@ function Calendar(props:Props){
                                     arr.map((value:Dayjs,j:number) => {
                                         return (
                                             <TableCell 
-                                            style={{color:calendarsEvent.getColor(value,publicHoliday),background:calendarsEvent.getBackGroudColor(value,now)}} 
-                                            key={j}>{value.date()}
+                                            style={{color:calendarsEvent.getColor(value,publicHoliday),
+                                                background:calendarsEvent.getBackGroudColor(value,now),
+                                                borderRight: '1px solid rgba(224, 224, 224, 1)'
+                                            }} 
+                                            key={j}
+                                            align="center"
+                                            >
+                                            {value.date()}
                                             </TableCell>
                                         )
                                     })
