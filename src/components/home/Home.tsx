@@ -7,9 +7,9 @@ import Todo from "../todo/Todo";
 
 function Home(){
 
-  const filterItems:string[] = ["All","default"];
+  const filterItems:string[] = ["月","日"];
 
-  const [schedules,setShedules] = useState<any[]>([]);
+  const [googleSchedules,setGoogleShedules] = useState<any[]>([]);
   const [holiday,setHoliday] = useState<any[]>([]);
     return(
         <>
@@ -22,8 +22,8 @@ function Home(){
             />
 
             <Calendar
-               schedules={schedules}
-               setShedules={setShedules}
+               googleSchedules={googleSchedules}
+               setGoogleShedules={setGoogleShedules}
                setHoliday={setHoliday}           
             />
             <ContentHeader
@@ -33,7 +33,7 @@ function Home(){
             />
 
             <Todo
-               schedules={schedules}
+               schedules={googleSchedules}
             />
           </Container>
         </>

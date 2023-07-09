@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useLayoutEffect, useMemo, useState } from 'react';
-import { Box, TableBody, makeStyles } from '@mui/material';
+import { Box, TableBody, Typography, makeStyles } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
@@ -13,11 +13,14 @@ import { useCalendarsEvent } from '../../hooks/CalendarsEvent';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { GoogleSchedule } from '../../types/googleSchedule';
+import { DateFormat } from '../../constants/Date';
+import CircularIndeterminate from '../circular/CircularIndeterminate';
 
 
 type Props = {
-    schedules:any[]
-    setShedules:Dispatch<SetStateAction<any[]>>
+    googleSchedules:any[]//Googleカレンダー スケジュール情報
+    setGoogleShedules:Dispatch<SetStateAction<any[]>>
     setHoliday:Dispatch<SetStateAction<any[]>>
 }
 
@@ -30,6 +33,8 @@ function Calendar(props:Props){
     //カレンダー情報
     const [calendars,setCalendars] = useState<Dayjs[][]>();
 
+    const [googleSchedulesMap,setGoogleSchedulesMap] = useState<Map<string, GoogleSchedule[]>>();
+
     const now:Dayjs= dayjs();
     //対象月初
     const [targetBeginMonth,setTargetBeginMonth] = useState<Dayjs>(now.startOf("month"))
@@ -40,20 +45,21 @@ function Calendar(props:Props){
     //年号
     const [yearNum,setYearNum] = useState<string>("");
 
+    const [showCircularFlag,setShowCircularFlag] = useState<boolean>(false);
+
     const [calendarsEvent] = useCalendarsEvent(props,
         setPublicHoliday,setCalendars,setTargetBeginMonth,
-        setStartDay,setEndDay,setYearNum);
-
+        setStartDay,setEndDay,setYearNum,setGoogleSchedulesMap);
 
     useLayoutEffect(() => {
-        //現在の時刻データを取得する
-        //calendarsEvent.getNowDayInfo(startDay,endDay,now);
+        setShowCircularFlag(true);
         Promise.all(([calendarsEvent.getSchedules(startDay,endDay),
             calendarsEvent.getPublicHoliday(now.year()),
-            calendarsEvent.getNowDayInfo(startDay,endDay,now)
+            calendarsEvent.getNowDayInfo(startDay,endDay,now)  //現在の時刻データを取得する
         ]))
         .then((values:any) => {
              console.info("処理に成功しました");
+             setShowCircularFlag(false);
         })
         .catch((error:any) => {
             console.error(error);
@@ -62,6 +68,10 @@ function Calendar(props:Props){
 
     return(
         <>
+
+        <CircularIndeterminate
+        showFlag={showCircularFlag}
+        />
         <Box>
             <Box style={{display:"flex"}}>
                 <Box>
@@ -103,21 +113,32 @@ function Calendar(props:Props){
                         <TableCell style={{color:"aqua",borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">土</TableCell>
                     </TableRow>
                     {
-                    calendars && calendars.map((arr:any,index:number) => {
+                    calendars && calendars.map((arr:Dayjs[],index:number) => {
                             return(
                                 <TableBody key={index}>
                                 {
                                     arr.map((value:Dayjs,j:number) => {
                                         return (
                                             <TableCell 
-                                            style={{color:calendarsEvent.getColor(value,publicHoliday),
-                                                background:calendarsEvent.getBackGroudColor(value,now),
-                                                borderRight: '1px solid rgba(224, 224, 224, 1)'
-                                            }} 
-                                            key={j}
-                                            align="center"
+                                                style={{color:calendarsEvent.getColor(value,publicHoliday),
+                                                    background:calendarsEvent.getBackGroudColor(value,now),
+                                                    borderRight: '1px solid rgba(224, 224, 224, 1)'
+                                                }} 
+                                                key={j}
+                                                align="center"
                                             >
-                                            {value.date()}
+                                                {
+                                                    googleSchedulesMap?.has(value.format(DateFormat.YYYYMMDD)) 
+                                                    && googleSchedulesMap.get(value.format(DateFormat.YYYYMMDD))?.map((googleSchedule:GoogleSchedule) => {
+                                                        return(
+                                                            <Typography>{googleSchedule.summary}</Typography>
+                                                        )
+                                                    })
+                                                }
+                                              {publicHoliday[value.format(DateFormat.YYYYMMDD)] &&
+                                                <Typography>{publicHoliday[value.format(DateFormat.YYYYMMDD)]}</Typography>
+                                              }
+                                              {value.date()} 
                                             </TableCell>
                                         )
                                     })

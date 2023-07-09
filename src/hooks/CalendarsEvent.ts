@@ -1,6 +1,8 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import dayjs, { Dayjs } from 'dayjs';
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { GoogleSchedule } from "../types/googleSchedule";
+import { DateFormat } from "../constants/Date";
 
 type CalendarsEvent = {
     getSchedules: (startDay:Dayjs,endDay:Dayjs) => void;
@@ -18,7 +20,8 @@ export const useCalendarsEvent = (
     setTargetBeginMonth:Dispatch<SetStateAction<Dayjs>>,
     setStartDay:Dispatch<SetStateAction<Dayjs>>,
     setEndDay:Dispatch<SetStateAction<Dayjs>>,
-    setYearNum:Dispatch<SetStateAction<string>>
+    setYearNum:Dispatch<SetStateAction<string>>,
+    setGoogleSchedulesMap:Dispatch<SetStateAction<Map<string, GoogleSchedule[]> | undefined>>
 ): [CalendarsEvent] => {
     /**
      * スケジュール情報を取得する
@@ -34,20 +37,45 @@ export const useCalendarsEvent = (
 
             let backendUrl:string | undefined = process.env.REACT_APP_BACKEND_URL;
             if(backendUrl){
+                try{
                     let res:AxiosResponse = await axios.get(backendUrl + "calendars",axiosRequestConfig);
                     let body = res.data.body;
-                    let schedules = body.map((schedule:any) => {
+                    let googleSchedules:GoogleSchedule[] = body.map((schedule:any) => {
                         return {
                             summary:schedule.summary,
                             description:schedule.description,
                             status:schedule.status,
-                            start:dayjs(schedule.start).format("YYYY-MM-DD"),
-                            end:dayjs(schedule.end).format("YYYY-MM-DD"),
+                            start:dayjs(schedule.start).format(DateFormat.YYYYMMDDHHmm),
+                            end:dayjs(schedule.end).format(DateFormat.YYYYMMDDHHmm),
                             eventType:schedule.eventType
                         }
                     })
 
-                    props.setShedules(schedules);
+                    let googleSchedulesMap = new Map<string, GoogleSchedule[]>();
+                    for(let googleSchedule of googleSchedules){
+                        let start:Dayjs = dayjs(googleSchedule.start);
+                        let end:Dayjs = dayjs(googleSchedule.end);
+                        let diff:number = end.diff(start,"day");
+
+                        let copyStart:Dayjs = dayjs(start);
+                        for(let i = 0; i <= diff; i++){
+                            let copyStartFormat:string = copyStart.format(DateFormat.YYYYMMDD);
+                            let getGoogleSchedules:GoogleSchedule[] | undefined = googleSchedulesMap.get(copyStartFormat);
+                            if(getGoogleSchedules){
+                                googleSchedulesMap.set(copyStartFormat,[...getGoogleSchedules,googleSchedule]);
+                            } else {
+                                googleSchedulesMap.set(copyStartFormat,[googleSchedule]);
+                            }
+
+                            copyStart.add(1,"d");
+                        }
+                    }
+                    setGoogleSchedulesMap(googleSchedulesMap);
+                    //Googleカレンダー スケジュール情報を取得する
+                    props.setGoogleShedules(googleSchedules);
+                } catch(error:any){
+                    console.error(error.message,error);
+                }
             }
 
         } catch(error){
@@ -98,7 +126,8 @@ export const useCalendarsEvent = (
         setCalendars(thisCalendars);
         //年号更新
         setYearNum(thisTargetBeginMonth.toDate().toLocaleString( "ja-JP-u-ca-japanese" ,{ era : "short" }).split("/")[0]);
-
+        //スケジュール情報を取得する
+        getSchedules(thisStartDay,thisEndDay);
     }
 
     /**
@@ -130,7 +159,7 @@ export const useCalendarsEvent = (
         //カレンダー情報更新
         setCalendars(thisCalendars);
         //年号更新
-        setYearNum(now.toDate().toLocaleString( "ja-JP-u-ca-japanese" ,{ era : "short" }).split("/")[0]);        
+        setYearNum(now.toDate().toLocaleString( "ja-JP-u-ca-japanese" ,{ era : "short" }).split("/")[0]);
     }
 
     /**
