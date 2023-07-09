@@ -21,7 +21,8 @@ export const useCalendarsEvent = (
     setStartDay:Dispatch<SetStateAction<Dayjs>>,
     setEndDay:Dispatch<SetStateAction<Dayjs>>,
     setYearNum:Dispatch<SetStateAction<string>>,
-    setGoogleSchedulesMap:Dispatch<SetStateAction<Map<string, GoogleSchedule[]> | undefined>>
+    setGoogleSchedulesMap:Dispatch<SetStateAction<Map<string, GoogleSchedule[]> | undefined>>,
+    setShowCircularFlag:Dispatch<SetStateAction<boolean>>
 ): [CalendarsEvent] => {
     /**
      * スケジュール情報を取得する
@@ -89,6 +90,7 @@ export const useCalendarsEvent = (
      * @param eventType イベントタイプ 1:前月,2:次月
      */
     const getPreAfterDayInfo = (targetBeginMonth:Dayjs,eventType:number) => {
+        setShowCircularFlag(true);
         let thisTargetBeginMonth = dayjs(targetBeginMonth);
         if(eventType === 1){
             thisTargetBeginMonth = dayjs(thisTargetBeginMonth).subtract(1,"M");
@@ -128,6 +130,7 @@ export const useCalendarsEvent = (
         setYearNum(thisTargetBeginMonth.toDate().toLocaleString( "ja-JP-u-ca-japanese" ,{ era : "short" }).split("/")[0]);
         //スケジュール情報を取得する
         getSchedules(thisStartDay,thisEndDay);
+        setShowCircularFlag(false);
     }
 
     /**
