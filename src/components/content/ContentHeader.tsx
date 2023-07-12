@@ -23,7 +23,7 @@ function ContentHeader(props:Props){
                     {
                         props.filterItems.map((filterItem:string,index:number) => {
                             return(
-                                <MenuItem value={filterItem}>
+                                <MenuItem value={filterItem} key={index}>
                                     {filterItem}
                                 </MenuItem>
                             )
