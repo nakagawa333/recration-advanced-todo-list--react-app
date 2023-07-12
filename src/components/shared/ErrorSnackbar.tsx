@@ -1,4 +1,4 @@
-import Alert, { AlertColor } from "@mui/material/Alert";
+import { Alert, AlertColor } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import { Dispatch, SetStateAction } from "react";
 
@@ -9,8 +9,8 @@ type Props = {
     setSnackBarOpen:Dispatch<SetStateAction<boolean>>
 }
 
-function SucessSnackbar(props:Props){
-    const severity:AlertColor = "success";
+function ErrorSnackbar(props:Props){
+    const severity:AlertColor = "error";
     const handleClose = () => {
         props.setSnackBarOpen(false);
     }
@@ -28,4 +28,4 @@ function SucessSnackbar(props:Props){
     )
 }
 
-export default SucessSnackbar;
+export default ErrorSnackbar;

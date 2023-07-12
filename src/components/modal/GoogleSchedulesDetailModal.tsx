@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios, { AxiosRequestConfig, AxiosResponse, HttpStatusCode } from "axios";
 import ClearIcon from '@mui/icons-material/Clear';
 import SucessSnackbar from "../shared/SucessSnackbar";
+import ErrorSnackbar from "../shared/ErrorSnackbar";
 
 type Props = {
   openFlag:boolean,
@@ -18,7 +19,8 @@ type Props = {
 }
 
 function GoogleSchedulesDetailModal(props:Props){
-  const [snackBarOpen,setSnackBarOpen] = useState<boolean>(false);
+  const [successSnackBarOpen,setSuccessSnackBarOpen] = useState<boolean>(false);
+  const [errorSnackBarOpen,setErrorSnackBarOpen] = useState<boolean>(false);
   const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -63,7 +65,7 @@ function GoogleSchedulesDetailModal(props:Props){
           return;
         }
         
-        setSnackBarOpen(true);
+        setSuccessSnackBarOpen(true);
         props.setReloadFlag(2);
       }
     } catch(error:any){
@@ -77,11 +79,19 @@ function GoogleSchedulesDetailModal(props:Props){
   return (
       <>
         <SucessSnackbar
-          snackBarOpen={snackBarOpen}
-          setSnackBarOpen={setSnackBarOpen}
+          snackBarOpen={successSnackBarOpen}
+          setSnackBarOpen={setSuccessSnackBarOpen}
           autoHideDuration={3000}
           message={"削除に成功しました"} 
-        />      
+        />
+
+        <ErrorSnackbar
+          snackBarOpen={errorSnackBarOpen}
+          setSnackBarOpen={setErrorSnackBarOpen}
+          autoHideDuration={3000}
+          message={"削除に失敗しました"}
+        />        
+        
         {
           props.openFlag
           &&
