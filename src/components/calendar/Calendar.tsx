@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useLayoutEffect, useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Box, TableBody, Typography, makeStyles } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
@@ -49,23 +49,28 @@ function Calendar(props:Props){
     const [calendarsEvent] = useCalendarsEvent(props,
         setPublicHoliday,setCalendars,setTargetBeginMonth,
         setStartDay,setEndDay,setYearNum,setGoogleSchedulesMap,setShowCircularFlag);
+    
+    const [reloadFlag,setReloadFlag] = useState<number>(0);
 
     useLayoutEffect(() => {
-        setShowCircularFlag(true);
-        Promise.all(([calendarsEvent.getSchedules(startDay,endDay),
-            calendarsEvent.getPublicHoliday(now.year()),
-            calendarsEvent.getNowDayInfo(startDay,endDay,now)  //現在の時刻データを取得する
-        ]))
-        .then((values:any) => {
-             console.info("処理に成功しました");
-        })
-        .catch((error:any) => {
-            console.error(error);
-        })
-        .finally(() => {
-            setShowCircularFlag(false);
-        })
-    },[])
+        if(reloadFlag === 0 || reloadFlag === 2){
+            setShowCircularFlag(true);
+            Promise.all(([calendarsEvent.getSchedules(startDay,endDay),
+                calendarsEvent.getPublicHoliday(now.year()),
+                calendarsEvent.getNowDayInfo(startDay,endDay,now)  //現在の時刻データを取得する
+            ]))
+            .then((values:any) => {
+                 console.info("処理に成功しました");
+            })
+            .catch((error:any) => {
+                console.error(error);
+            })
+            .finally(() => {
+                setShowCircularFlag(false);
+                setReloadFlag(1);
+            })
+        }
+    },[reloadFlag])
 
     return(
         <>
@@ -84,6 +89,7 @@ function Calendar(props:Props){
           publicHoliday={publicHoliday}
           googleSchedulesMap={googleSchedulesMap}
           setDetailModalFlag={setDetailModalFlag}
+          setReloadFlag={setReloadFlag}
           getPreAfterDayInfo={calendarsEvent.getPreAfterDayInfo}
           getColor={calendarsEvent.getColor}
           getBackGroudColor={calendarsEvent.getBackGroudColor}

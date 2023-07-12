@@ -48,7 +48,8 @@ export const useCalendarsEvent = (
                             status:schedule.status,
                             start:dayjs(schedule.start).format(DateFormat.YYYYMMDDHHmm),
                             end:dayjs(schedule.end).format(DateFormat.YYYYMMDDHHmm),
-                            eventType:schedule.eventType
+                            eventType:schedule.eventType,
+                            eventId:schedule.eventId
                         }
                     })
 
@@ -207,7 +208,6 @@ export const useCalendarsEvent = (
 
         //祝日
         if(publicHoliday[dayjs.format("YYYY-MM-DD")]){
-            console.log("hello")
             return "red";
         }
 

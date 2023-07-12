@@ -21,6 +21,7 @@ type Props = {
     publicHoliday:any
     googleSchedulesMap:Map<string, GoogleSchedule[]> | undefined
     setDetailModalFlag:Dispatch<SetStateAction<boolean>>
+    setReloadFlag:Dispatch<SetStateAction<number>>
     getPreAfterDayInfo:(targetBeginMonth:Dayjs,eventType:number) => void;
     getColor: (day:Dayjs,publicHoliday:any) => string;
     getBackGroudColor: (day:Dayjs,now:Dayjs) => string;
@@ -31,16 +32,25 @@ type Props = {
 function CalendarDetail(props:Props){
     const [openFlag,setOpenFlag] = useState<boolean>(false);
     const [googleSchedule,setGoogleSchedule] = useState<GoogleSchedule | null>(null);
-    const summaryClick = (googleSchedule:GoogleSchedule) => {
+    const [day,setDay] = useState<Dayjs | null>(null);
+    /**
+     * サマリークリック時   
+     * @param googleSchedule Googleスケジュール情報 
+     * @param day 日時情報
+     */
+    const summaryClick = (googleSchedule:GoogleSchedule,day:Dayjs) => {
         setGoogleSchedule(googleSchedule);
         setOpenFlag(true);
+        setDay(day);
     }
     return(
         <>
             <GoogleSchedulesDetailModal 
               openFlag={openFlag}
               setOpenFlag={setOpenFlag}
+              setReloadFlag={props.setReloadFlag}
               googleSchedule={googleSchedule}
+              day={day}
             />
             <Box>
                 <Box style={{display:"flex"}}>
@@ -83,32 +93,32 @@ function CalendarDetail(props:Props){
                             <TableCell style={{color:"aqua",borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">土</TableCell>
                         </TableRow>
                         {
-                        props.calendars && props.calendars.map((arr:Dayjs[],index:number) => {
+                        props.calendars && props.calendars.map((dayArr:Dayjs[],index:number) => {
                                 return(
                                     <TableBody key={index}>
                                     {
-                                        arr.map((value:Dayjs,j:number) => {
+                                        dayArr.map((day:Dayjs,j:number) => {
                                             return (
                                                 <TableCell 
-                                                    style={{color:props.getColor(value,props.publicHoliday),
-                                                        background:props.getBackGroudColor(value,props.now),
+                                                    style={{color:props.getColor(day,props.publicHoliday),
+                                                        background:props.getBackGroudColor(day,props.now),
                                                         borderRight: '1px solid rgba(224, 224, 224, 1)'
                                                     }} 
                                                     key={j}
                                                     align="center"
                                                 >
                                                     {
-                                                        props.googleSchedulesMap?.has(value.format(DateFormat.YYYYMMDD)) 
-                                                        && props.googleSchedulesMap.get(value.format(DateFormat.YYYYMMDD))?.map((googleSchedule:GoogleSchedule) => {
+                                                        props.googleSchedulesMap?.has(day.format(DateFormat.YYYYMMDD)) 
+                                                        && props.googleSchedulesMap.get(day.format(DateFormat.YYYYMMDD))?.map((googleSchedule:GoogleSchedule) => {
                                                             return(
-                                                                <Typography onClick={() => summaryClick(googleSchedule)}>{googleSchedule.summary}</Typography>
+                                                                <Typography onClick={() => summaryClick(googleSchedule,day)}>{googleSchedule.summary}</Typography>
                                                             )
                                                         })
                                                     }
-                                                {props.publicHoliday[value.format(DateFormat.YYYYMMDD)] &&
-                                                    <Typography>{props.publicHoliday[value.format(DateFormat.YYYYMMDD)]}</Typography>
+                                                {props.publicHoliday[day.format(DateFormat.YYYYMMDD)] &&
+                                                    <Typography>{props.publicHoliday[day.format(DateFormat.YYYYMMDD)]}</Typography>
                                                 }
-                                                {value.date()} 
+                                                {day.date()} 
                                                 </TableCell>
                                             )
                                         })

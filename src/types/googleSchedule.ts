@@ -4,5 +4,6 @@ export type GoogleSchedule = {
     status:string,
     start:string,
     end:string,
-    eventType:string   
+    eventType:string,
+    eventId:string
 }
