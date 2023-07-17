@@ -22,7 +22,8 @@ export const useCalendarsEvent = (
     setEndDay:Dispatch<SetStateAction<Dayjs>>,
     setYearNum:Dispatch<SetStateAction<string>>,
     setGoogleSchedulesMap:Dispatch<SetStateAction<Map<string, GoogleSchedule[]> | undefined>>,
-    setShowCircularFlag:Dispatch<SetStateAction<boolean>>
+    setShowCircularFlag:Dispatch<SetStateAction<boolean>>,
+    setEventColors:Dispatch<SetStateAction<any>>
 ): [CalendarsEvent] => {
     /**
      * スケジュール情報を取得する
@@ -41,7 +42,7 @@ export const useCalendarsEvent = (
                 try{
                     let res:AxiosResponse = await axios.get(backendUrl + "calendars",axiosRequestConfig);
                     let body = res.data.body;
-                    let googleSchedules:GoogleSchedule[] = body.map((schedule:any) => {
+                    let googleSchedules:GoogleSchedule[] = body.calendars.map((schedule:any) => {
                         return {
                             summary:schedule.summary,
                             description:schedule.description,
@@ -49,7 +50,9 @@ export const useCalendarsEvent = (
                             start:dayjs(schedule.start).format(DateFormat.YYYYMMDDHHmm),
                             end:dayjs(schedule.end).format(DateFormat.YYYYMMDDHHmm),
                             eventType:schedule.eventType,
-                            eventId:schedule.eventId
+                            eventId:schedule.eventId,
+                            colorId:schedule.colorId,
+                            backgroundColor:schedule.backgroundColor
                         }
                     })
 
@@ -75,6 +78,8 @@ export const useCalendarsEvent = (
                     setGoogleSchedulesMap(googleSchedulesMap);
                     //Googleカレンダー スケジュール情報を取得する
                     props.setGoogleShedules(googleSchedules);
+                    //カラー一覧
+                    props.setEventColors(body.eventColors);
                 } catch(error:any){
                     console.error(error.message,error);
                 }

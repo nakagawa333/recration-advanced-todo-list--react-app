@@ -14,6 +14,7 @@ import { GoogleSchedule } from '../../types/googleSchedule';
 import { DateFormat } from '../../constants/Date';
 import CircularIndeterminate from '../circular/CircularIndeterminate';
 import CalendarDetail from './CalendarDetail';
+import { EventColors } from '../../types/eventColors';
 
 
 type Props = {
@@ -42,13 +43,15 @@ function Calendar(props:Props){
     const [endDay,setEndDay] = useState<Dayjs>(now.endOf("month").add(6 - now.endOf("month").day() ,"d"));
     //年号
     const [yearNum,setYearNum] = useState<string>("");
+    const [eventColors,setEventColors] = useState<EventColors>({});
 
     const [showCircularFlag,setShowCircularFlag] = useState<boolean>(false);
     const [detailModalFlag,setDetailModalFlag] = useState<boolean>(false);
 
     const [calendarsEvent] = useCalendarsEvent(props,
         setPublicHoliday,setCalendars,setTargetBeginMonth,
-        setStartDay,setEndDay,setYearNum,setGoogleSchedulesMap,setShowCircularFlag);
+        setStartDay,setEndDay,setYearNum,setGoogleSchedulesMap,
+        setShowCircularFlag,setEventColors);
     
     const [reloadFlag,setReloadFlag] = useState<number>(0);
 
@@ -86,6 +89,7 @@ function Calendar(props:Props){
           endDay={endDay}
           calendars={calendars}
           now={now}
+          eventColors={eventColors}
           publicHoliday={publicHoliday}
           googleSchedulesMap={googleSchedulesMap}
           setDetailModalFlag={setDetailModalFlag}

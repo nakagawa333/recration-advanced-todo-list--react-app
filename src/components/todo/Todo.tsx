@@ -10,9 +10,9 @@ function Todo(props:Props){
     return (
         <Box style={{display:"flex"}}>
             {
-                props.schedules.map((schedule:any) => {
+                props.schedules.map((schedule:any,index:number) => {
                     return(
-                        <Box>
+                        <Box key={index}>
                             <Card variant="outlined" sx={{maxWidth:200}}>
                                 <p>{schedule.summary}</p>
                                 <p>ステータス:{schedule.status}</p>

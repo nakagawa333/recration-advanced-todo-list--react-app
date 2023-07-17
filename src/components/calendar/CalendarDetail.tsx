@@ -4,12 +4,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Box, TableBody, Typography} from '@mui/material';
+import { Box, Chip, TableBody, Typography} from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { DateFormat } from '../../constants/Date';
 import { GoogleSchedule } from '../../types/googleSchedule';
 import { Dispatch, SetStateAction, useState } from 'react';
 import GoogleSchedulesDetailModal from '../modal/GoogleSchedulesDetailModal';
+import { EventColors } from '../../types/eventColors';
 
 type Props = {
     yearNum:string //年号
@@ -18,6 +19,7 @@ type Props = {
     endDay:Dayjs
     calendars:Dayjs[][] | undefined
     now:Dayjs
+    eventColors:EventColors
     publicHoliday:any
     googleSchedulesMap:Map<string, GoogleSchedule[]> | undefined
     setDetailModalFlag:Dispatch<SetStateAction<boolean>>
@@ -51,6 +53,7 @@ function CalendarDetail(props:Props){
               setReloadFlag={props.setReloadFlag}
               googleSchedule={googleSchedule}
               day={day}
+              eventColors={props.eventColors}
             />
             <Box>
                 <Box style={{display:"flex"}}>
@@ -110,9 +113,21 @@ function CalendarDetail(props:Props){
                                                     {
                                                         props.googleSchedulesMap?.has(day.format(DateFormat.YYYYMMDD)) 
                                                         && props.googleSchedulesMap.get(day.format(DateFormat.YYYYMMDD))?.map((googleSchedule:GoogleSchedule) => {
+                                                            if(googleSchedule.backgroundColor){
+                                                                return(
+                                                                    <Box>
+                                                                        <Chip 
+                                                                        label={googleSchedule.summary} 
+                                                                        onClick={() => summaryClick(googleSchedule,day)} 
+                                                                        style={{background:googleSchedule.backgroundColor}}
+                                                                        />
+                                                                    </Box>
+                                                                )
+                                                            }
+                                                            
                                                             return(
-                                                                <Typography onClick={() => summaryClick(googleSchedule,day)}>{googleSchedule.summary}</Typography>
-                                                            )
+                                                                <Typography onClick={() => summaryClick(googleSchedule,day)}>{googleSchedule.summary}</Typography>                                                                
+                                                            )                                                            
                                                         })
                                                     }
                                                 {props.publicHoliday[day.format(DateFormat.YYYYMMDD)] &&
