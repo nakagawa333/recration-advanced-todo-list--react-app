@@ -56,23 +56,27 @@ function Calendar(props:Props){
     const [reloadFlag,setReloadFlag] = useState<number>(0);
 
     useLayoutEffect(() => {
-        if(reloadFlag === 0 || reloadFlag === 2){
-            setShowCircularFlag(true);
-            Promise.all(([calendarsEvent.getSchedules(startDay,endDay),
-                calendarsEvent.getPublicHoliday(now.year()),
-                calendarsEvent.getNowDayInfo(startDay,endDay,now)  //現在の時刻データを取得する
-            ]))
-            .then((values:any) => {
-                 console.info("処理に成功しました");
-            })
-            .catch((error:any) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setShowCircularFlag(false);
-                setReloadFlag(1);
-            })
+        const f = async() => {
+            if(reloadFlag === 0 || reloadFlag === 2){
+                setShowCircularFlag(true);
+                await Promise.all(([calendarsEvent.getSchedules(startDay,endDay),
+                    calendarsEvent.getPublicHoliday(now.year()),
+                    calendarsEvent.getNowDayInfo(startDay,endDay,now)  //現在の時刻データを取得する
+                ]))
+                .then((values:any) => {
+                     console.info("処理に成功しました");
+                })
+                .catch((error:any) => {
+                    console.error(error);
+                })
+                .finally(() => {
+                    setShowCircularFlag(false);
+                    setReloadFlag(1);
+                })
+            }
         }
+
+        f();
     },[reloadFlag])
 
     return(

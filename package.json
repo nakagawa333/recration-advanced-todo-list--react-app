@@ -18,6 +18,8 @@
     "@types/react-dom": "^18.2.6",
     "axios": "^1.4.0",
     "dayjs": "^1.11.8",
+    "draft-js-export-html": "^1.4.1",
+    "draft-js-import-html": "^1.4.1",
     "googleapis": "^105.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

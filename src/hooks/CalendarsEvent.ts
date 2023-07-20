@@ -79,7 +79,7 @@ export const useCalendarsEvent = (
                     //Googleカレンダー スケジュール情報を取得する
                     props.setGoogleShedules(googleSchedules);
                     //カラー一覧
-                    props.setEventColors(body.eventColors);
+                    setEventColors(body.eventColors);
                 } catch(error:any){
                     console.error(error.message,error);
                 }
