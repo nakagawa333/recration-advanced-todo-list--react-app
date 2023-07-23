@@ -118,6 +118,8 @@ function GoogleSchedulesDetailModal(props:Props){
         <GoogleSchedulesEditModal
           openFlag={editOpenFlag}
           setOpenFlag={setEditOpenFlag}
+          setDetailFlag={props.setOpenFlag}
+          setReloadFlag={props.setReloadFlag}
           googleSchedule={props.googleSchedule}
           eventColors={props.eventColors}
         />

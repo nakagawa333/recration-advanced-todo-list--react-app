@@ -13,10 +13,18 @@ import {stateFromHTML} from 'draft-js-import-html';
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css"
 import { convertToRaw, EditorState,ContentState } from "draft-js";
+import axios from "axios";
+import ErrorSnackbar from "../shared/ErrorSnackbar";
+import SucessSnackbar from "../shared/SucessSnackbar";
+import { Day } from "../../common/Day";
+import { useGoogleSchedulesEditModalEvent } from "../../hooks/GoogleSchedulesEditModalEvent";
+import { monitorEventLoopDelay } from "perf_hooks";
 
 type Props = {
     openFlag:boolean,
     setOpenFlag:Dispatch<SetStateAction<boolean>>
+    setDetailFlag:Dispatch<SetStateAction<boolean>>
+    setReloadFlag:Dispatch<SetStateAction<number>>
     googleSchedule:GoogleSchedule | null
     eventColors:EventColors
 }
@@ -24,19 +32,40 @@ type Props = {
 function GoogleSchedulesEditModal(props:Props){
     //summary
     const summaryInputRef = useRef<HTMLInputElement>(null);
+    //色
+    const colorSelectRef = useRef<HTMLSelectElement>(null);
+
     const dateRef = useRef<any>(null);
     const startTimeRef = useRef<any>(null);
     const endTimeRef = useRef<any>(null);
     const [description,setDescription] = useState<any>(props.googleSchedule?.description);
 
     const elementStore = description ? EditorState.createWithContent(stateFromHTML(description)) : EditorState.createEmpty();
+    
+    const [successSnackBarOpen,setSuccessSnackBarOpen] = useState<boolean>(false);
+    const [errorSnackBarOpen,setErrorSnackBarOpen] = useState<boolean>(false);
+    const [timeError,setTimeError] = useState<boolean>(false);
+    
+    let [event] = useGoogleSchedulesEditModalEvent(
+        props.openFlag,
+        description,
+        props.setOpenFlag,
+        props.setDetailFlag,
+        props.setReloadFlag,
+        setDescription,
+        setTimeError,
+        setSuccessSnackBarOpen,
+        setErrorSnackBarOpen,
+        props.googleSchedule,
+        props.eventColors,
+        summaryInputRef,
+        colorSelectRef,
+        dateRef,
+        startTimeRef,
+        endTimeRef,
+        elementStore
+    ); 
 
-    useLayoutEffect(() => {
-
-        setDescription(props.googleSchedule?.description);
-    },[props.openFlag])
-    //description
-    const descriptionEditorRef = useRef<any>(null);
     const style = {
         position: 'absolute' as 'absolute',
         top: '50%',
@@ -53,47 +82,42 @@ function GoogleSchedulesEditModal(props:Props){
         pb: 3
     }
 
-    const summaryChange = (e:any) => {
-        if(summaryInputRef?.current?.value && props?.googleSchedule?.summary){
-            summaryInputRef.current.value = e.target.value;
-        }
-    }
-    
-    const onClose = () => {
-        props.setOpenFlag(false);
-    }
+    useLayoutEffect(() => {
 
-    //エディタの内容変更時
-    const editorChange = (e:any) => {
-        let description = stateToHTML(e.getCurrentContent());
-        setDescription(description);
-    }
-
-    /**
-     * 保存クリック時
-     */
-    const saveClick = () => {
-
-    }
+        setDescription(props.googleSchedule?.description);
+    },[props.openFlag])
     
     return(
         <>
+          <SucessSnackbar  
+            snackBarOpen={successSnackBarOpen}
+            setSnackBarOpen={setSuccessSnackBarOpen}
+            autoHideDuration={3000}
+            message={"更新に成功しました"}             
+          />
+          
+          <ErrorSnackbar 
+            snackBarOpen={errorSnackBarOpen}
+            setSnackBarOpen={setErrorSnackBarOpen}
+            autoHideDuration={3000}
+            message={"更新に失敗しました"}
+          />
           {
             (props.openFlag && props.googleSchedule)
             &&
                 <Modal
                     open={props.openFlag}
-                    onClose={onClose}
+                    onClose={event.onClose}
                 >
                     <Box sx={style}>
                         <Box style={{display:"flex",justifyContent:"flex-end"}}>
                         <Tooltip title="閉じる">
                             <IconButton>
                             <ClearIcon
-                            onClick={onClose}
+                            onClick={event.onClose}
                             />
                             </IconButton>                  
-                        </Tooltip>                           
+                        </Tooltip>            
                         </Box>
                         <Box>
                             <TextField 
@@ -104,7 +128,7 @@ function GoogleSchedulesEditModal(props:Props){
                               defaultValue={props.googleSchedule.summary}
                               fullWidth
                               size="small"
-                              onChange={summaryChange}
+                              onChange={(e) => event.summaryChange(e)}
                             />
                         </Box>
 
@@ -118,19 +142,25 @@ function GoogleSchedulesEditModal(props:Props){
                                 />                              
                             </Box>
                             <Box>
-                                <TextField 
+                                <TextField
+                                    error={timeError}
                                     type="time"
                                     defaultValue={dayjs(props.googleSchedule.start).format(DateFormat.HHmm)}
                                     size="small"
                                     inputRef={startTimeRef}
+                                    inputProps={{min:"00:00"}}
+                                    helperText={startTimeRef?.current?.validationMessage}
                                 />
                             </Box>
                             <Box>
                                 <TextField 
+                                    error={timeError}
                                     type="time"
                                     defaultValue={dayjs(props.googleSchedule.end).format(DateFormat.HHmm)}
                                     size="small"
                                     inputRef={endTimeRef}
+                                    inputProps={{max:"23:59"}}
+                                    helperText={endTimeRef?.current?.validationMessage}
                                 />
                             </Box>
                         </Box>
@@ -145,6 +175,7 @@ function GoogleSchedulesEditModal(props:Props){
                                     defaultValue={props.googleSchedule.backgroundColor}
                                     size="small"
                                     inputProps={{maxWidth:"20px"}}
+                                    inputRef={colorSelectRef}
                                 >
                                     {
                                         Object.keys(props.eventColors).map((key:any,index:number) => {
@@ -172,22 +203,15 @@ function GoogleSchedulesEditModal(props:Props){
                         </Box>
 
                         <Box style={{marginTop:"20px"}}>
-                            {/* <TextField 
-                              id="outlined-basic" 
-                              label="Outlined" 
-                              variant="outlined"
-                              value={props.googleSchedule.description}
-                            />                             */}
                             <Editor
                                 defaultEditorState={elementStore}
                                 toolbar={{
-                                    options: ["inline","list", "link"],
+                                    options: ["inline","list","link"],
                                     inline: {
-                                        // options: ["bold","oblique","Underline"],
                                         options:["bold","italic","underline"]
                                     },
                                     list: {
-                                        options: ["unordered"],
+                                        options: ["unordered","ordered"],
                                     },
                                     link: {
                                         options: ["link"],
@@ -197,13 +221,12 @@ function GoogleSchedulesEditModal(props:Props){
                                     locale: "ja",
                                 }}
                                 placeholder="ここに入力してください"
-                                onEditorStateChange={editorChange}
-                                // editorRef={descriptionEditorRef}
+                                onEditorStateChange={(e) => event.editorChange(e)}
                             />
                         </Box>
 
                         <Box style={{display:"flex",justifyContent:"flex-end"}}>
-                            <Button variant="contained" onClick={saveClick}>
+                            <Button variant="contained" onClick={() => event.saveClick()}>
                                 保存
                             </Button>
                         </Box>
