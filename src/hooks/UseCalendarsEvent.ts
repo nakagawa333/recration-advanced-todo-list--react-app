@@ -13,7 +13,7 @@ type CalendarsEvent = {
     getPreAfterDayInfo:(targetBeginMonth:Dayjs,eventType:number) => void;
 }
 
-export const useCalendarsEvent = (
+export const UseCalendarsEvent = (
     props:any,
     setPublicHoliday:Dispatch<SetStateAction<any[]>>,
     setCalendars:Dispatch<SetStateAction<Dayjs[][] | undefined>>,

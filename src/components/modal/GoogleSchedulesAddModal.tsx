@@ -1,35 +1,28 @@
-import { Dispatch, SetStateAction, useLayoutEffect, useRef, useState } from "react";
-import { GoogleSchedule } from "../../types/googleSchedule";
-import { EventColors } from "../../types/eventColors";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import { Badge, Button, FormControl, IconButton, InputLabel, MenuItem, Radio, Select, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
-import ClearIcon from '@mui/icons-material/Clear';
-import dayjs from "dayjs";
-import { DateFormat } from "../../constants/Date";
-import { Editor } from "react-draft-wysiwyg"
-import { stateToHTML } from "draft-js-export-html";
-import {stateFromHTML} from 'draft-js-import-html';
-
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css"
-import { convertToRaw, EditorState,ContentState } from "draft-js";
-import axios from "axios";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import ErrorSnackbar from "../shared/ErrorSnackbar";
 import SucessSnackbar from "../shared/SucessSnackbar";
-import { Day } from "../../common/Day";
-import { UseGoogleSchedulesEditModalEvent } from "../../hooks/UseGoogleSchedulesEditModalEvent";
-import { monitorEventLoopDelay } from "perf_hooks";
+import { GoogleSchedule } from "../../types/googleSchedule";
+import { EventColors } from "../../types/eventColors";
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Tooltip } from "@mui/material";
+import ClearIcon from '@mui/icons-material/Clear';
+import { Editor, EditorState } from "react-draft-wysiwyg";
+import dayjs from "dayjs";
+import { stateFromHTML } from "draft-js-import-html";
+import { DateFormat } from "../../constants/Date";
+import { UseGoogleSchedulesAddModalEvent } from "../../hooks/UseGoogleSchedulesAddModalEvent";
+
 
 type Props = {
     openFlag:boolean,
     setOpenFlag:Dispatch<SetStateAction<boolean>>
     setDetailFlag:Dispatch<SetStateAction<boolean>>
     setReloadFlag:Dispatch<SetStateAction<number>>
-    googleSchedule:GoogleSchedule | null
+    googleSchedule?:GoogleSchedule | null
     eventColors:EventColors
 }
 
-function GoogleSchedulesEditModal(props:Props){
+//Googleスケジュール作成
+function GoogleSchedulesAddModal(props:Props){
     //summary
     const summaryInputRef = useRef<HTMLInputElement>(null);
     //色
@@ -41,30 +34,9 @@ function GoogleSchedulesEditModal(props:Props){
     const [description,setDescription] = useState<any>(props.googleSchedule?.description);
 
     const elementStore = description ? EditorState.createWithContent(stateFromHTML(description)) : EditorState.createEmpty();
-    
     const [successSnackBarOpen,setSuccessSnackBarOpen] = useState<boolean>(false);
     const [errorSnackBarOpen,setErrorSnackBarOpen] = useState<boolean>(false);
     const [timeError,setTimeError] = useState<boolean>(false);
-    
-    let [event] = UseGoogleSchedulesEditModalEvent(
-        props.openFlag,
-        description,
-        props.setOpenFlag,
-        props.setDetailFlag,
-        props.setReloadFlag,
-        setDescription,
-        setTimeError,
-        setSuccessSnackBarOpen,
-        setErrorSnackBarOpen,
-        props.googleSchedule,
-        props.eventColors,
-        summaryInputRef,
-        colorSelectRef,
-        dateRef,
-        startTimeRef,
-        endTimeRef,
-        elementStore
-    ); 
 
     const style = {
         position: 'absolute' as 'absolute',
@@ -82,33 +54,51 @@ function GoogleSchedulesEditModal(props:Props){
         pb: 3
     }
 
-    useLayoutEffect(() => {
+    //タイトル(summary)
+    const summary:string = props?.googleSchedule?.summary ? props.googleSchedule.summary : "";
+    const startYYYYMMDD:string= props?.googleSchedule?.start ? dayjs(props.googleSchedule.start).format(DateFormat.YYYYMMDD) : "";
+    const startHHmm:string = props?.googleSchedule?.start ? dayjs(props.googleSchedule.start).format(DateFormat.HHmm) : "";
+    const backgroundColor:string = props?.googleSchedule?.backgroundColor ? props.googleSchedule.backgroundColor : "";
 
-        setDescription(props.googleSchedule?.description);
-    },[props.openFlag])
-    
+    let [event] = UseGoogleSchedulesAddModalEvent(
+        props.openFlag,
+        description,
+        props.setOpenFlag,
+        props.setDetailFlag,
+        props.setReloadFlag,
+        setDescription,
+        setTimeError,
+        setSuccessSnackBarOpen,
+        setErrorSnackBarOpen,
+        props.eventColors,
+        summaryInputRef,
+        colorSelectRef,
+        dateRef,
+        startTimeRef,
+        endTimeRef,
+        elementStore,
+        props?.googleSchedule
+    );
+
     return(
         <>
           <SucessSnackbar  
             snackBarOpen={successSnackBarOpen}
             setSnackBarOpen={setSuccessSnackBarOpen}
             autoHideDuration={3000}
-            message={"更新に成功しました"}             
+            message={"登録に成功しました"}             
           />
           
           <ErrorSnackbar 
             snackBarOpen={errorSnackBarOpen}
             setSnackBarOpen={setErrorSnackBarOpen}
             autoHideDuration={3000}
-            message={"更新に失敗しました"}
+            message={"登録に失敗しました"}
           />
-          {
-            (props.openFlag && props.googleSchedule)
-            &&
-                <Modal
-                    open={props.openFlag}
-                    onClose={event.onClose}
-                >
+             <Modal
+                open={props.openFlag}
+                onClose={event.onClose}
+              >
                     <Box sx={style}>
                         <Box style={{display:"flex",justifyContent:"flex-end"}}>
                         <Tooltip title="閉じる">
@@ -125,7 +115,7 @@ function GoogleSchedulesEditModal(props:Props){
                               label="タイトル" 
                               variant="outlined"
                               inputRef={summaryInputRef}
-                              defaultValue={props.googleSchedule.summary}
+                              defaultValue={summary}
                               fullWidth
                               size="small"
                               onChange={(e) => event.summaryChange(e)}
@@ -136,7 +126,7 @@ function GoogleSchedulesEditModal(props:Props){
                             <Box>
                                 <TextField 
                                  type="date"
-                                 defaultValue={dayjs(props.googleSchedule.start).format(DateFormat.YYYYMMDD)}
+                                 defaultValue={startYYYYMMDD}
                                  size="small"
                                  inputRef={dateRef}
                                 />                              
@@ -145,7 +135,7 @@ function GoogleSchedulesEditModal(props:Props){
                                 <TextField
                                     error={timeError}
                                     type="time"
-                                    defaultValue={dayjs(props.googleSchedule.start).format(DateFormat.HHmm)}
+                                    defaultValue={startHHmm}
                                     size="small"
                                     inputRef={startTimeRef}
                                     inputProps={{min:"00:00"}}
@@ -156,7 +146,7 @@ function GoogleSchedulesEditModal(props:Props){
                                 <TextField 
                                     error={timeError}
                                     type="time"
-                                    defaultValue={dayjs(props.googleSchedule.end).format(DateFormat.HHmm)}
+                                    defaultValue={startHHmm}
                                     size="small"
                                     inputRef={endTimeRef}
                                     inputProps={{max:"23:59"}}
@@ -172,7 +162,7 @@ function GoogleSchedulesEditModal(props:Props){
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     label="color"
-                                    defaultValue={props.googleSchedule.backgroundColor}
+                                    defaultValue={backgroundColor}
                                     size="small"
                                     inputProps={{maxWidth:"20px"}}
                                     inputRef={colorSelectRef}
@@ -232,10 +222,9 @@ function GoogleSchedulesEditModal(props:Props){
                         </Box>
                     </Box>
                 </Modal>
-            }
-
         </>
     )
 }
 
-export default GoogleSchedulesEditModal;
+export default GoogleSchedulesAddModal;
+

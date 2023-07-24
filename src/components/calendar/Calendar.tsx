@@ -9,7 +9,7 @@ import 'dayjs/locale/ja';
 import '../../index.css';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useCalendarsEvent } from '../../hooks/CalendarsEvent';
+import { UseCalendarsEvent } from '../../hooks/UseCalendarsEvent';
 import { GoogleSchedule } from '../../types/googleSchedule';
 import { DateFormat } from '../../constants/Date';
 import CircularIndeterminate from '../circular/CircularIndeterminate';
@@ -48,7 +48,7 @@ function Calendar(props:Props){
     const [showCircularFlag,setShowCircularFlag] = useState<boolean>(false);
     const [detailModalFlag,setDetailModalFlag] = useState<boolean>(false);
 
-    const [calendarsEvent] = useCalendarsEvent(props,
+    const [calendarsEvent] = UseCalendarsEvent(props,
         setPublicHoliday,setCalendars,setTargetBeginMonth,
         setStartDay,setEndDay,setYearNum,setGoogleSchedulesMap,
         setShowCircularFlag,setEventColors);

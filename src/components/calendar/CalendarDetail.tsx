@@ -37,10 +37,13 @@ function CalendarDetail(props:Props){
     const [day,setDay] = useState<Dayjs | null>(null);
     /**
      * サマリークリック時   
+     * @param e イベント
      * @param googleSchedule Googleスケジュール情報 
      * @param day 日時情報
      */
-    const summaryClick = (googleSchedule:GoogleSchedule,day:Dayjs) => {
+    const summaryClick = (event:any,googleSchedule:GoogleSchedule,day:Dayjs) => {
+        //イベントの伝播を中断
+        event.stopPropagation();
         setGoogleSchedule(googleSchedule);
         setOpenFlag(true);
         setDay(day);
@@ -109,6 +112,7 @@ function CalendarDetail(props:Props){
                                                     }} 
                                                     key={j}
                                                     align="center"
+                                                    onClick={() => alert("hello")}
                                                 >
                                                     {
                                                         props.googleSchedulesMap?.has(day.format(DateFormat.YYYYMMDD)) 
@@ -118,7 +122,7 @@ function CalendarDetail(props:Props){
                                                                     <Box>
                                                                         <Chip 
                                                                         label={googleSchedule.summary} 
-                                                                        onClick={() => summaryClick(googleSchedule,day)} 
+                                                                        onClick={(e) => summaryClick(e,googleSchedule,day)} 
                                                                         style={{background:googleSchedule.backgroundColor}}
                                                                         />
                                                                     </Box>
@@ -126,7 +130,7 @@ function CalendarDetail(props:Props){
                                                             }
                                                             
                                                             return(
-                                                                <Typography onClick={() => summaryClick(googleSchedule,day)}>{googleSchedule.summary}</Typography>                                                                
+                                                                <Typography onClick={(e) => summaryClick(e,googleSchedule,day)}>{googleSchedule.summary}</Typography>                                                                
                                                             )                                                            
                                                         })
                                                     }

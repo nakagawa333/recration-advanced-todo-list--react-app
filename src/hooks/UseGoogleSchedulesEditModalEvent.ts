@@ -14,7 +14,7 @@ type GoogleSchedulesEditModalEvent = {
     saveClick:() => void;
 }
 
-export const useGoogleSchedulesEditModalEvent = (
+export const UseGoogleSchedulesEditModalEvent = (
     openFlag:boolean,
     description:any,
     setOpenFlag:Dispatch<SetStateAction<boolean>>,
