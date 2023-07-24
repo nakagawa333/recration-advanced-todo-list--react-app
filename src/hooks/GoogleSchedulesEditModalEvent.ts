@@ -82,7 +82,7 @@ export const useGoogleSchedulesEditModalEvent = (
         let endDate:string = `${date} ${endTime}`;
 
         if(!Day.compareStartToEndTime(startDate,endDate)){
-            startTimeRef.current.setCustomValidity("開始時刻は終了時刻よりも後である必要があります。");
+            startTimeRef.current.setCustomValidity("開始時刻は終了時刻よりも前である必要があります。");
             endTimeRef.current.setCustomValidity("終了時刻は開始時刻よりも後である必要があります。");
             setTimeError(true);
             return;
