@@ -48,6 +48,12 @@ export const useGoogleSchedulesEditModalEvent = (
      * モーダルが閉じる際
      */
     const onClose = () => {
+        //クローズ処理
+        editModalClose();
+    }
+
+    //クローズ処理
+    const editModalClose = () =>{
         //モーダルを閉じる
         setOpenFlag(false);
         //エラー初期化
@@ -132,7 +138,7 @@ export const useGoogleSchedulesEditModalEvent = (
             setSuccessSnackBarOpen(true);
 
             //編集モーダルを閉じる
-            setOpenFlag(false);
+            editModalClose();
             //詳細モーダルを閉じる
             setDetailFlag(false);
             //画面ロード
