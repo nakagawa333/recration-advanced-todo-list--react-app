@@ -5,8 +5,9 @@ import { GoogleSchedule } from "../../types/googleSchedule";
 import { EventColors } from "../../types/eventColors";
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Tooltip } from "@mui/material";
 import ClearIcon from '@mui/icons-material/Clear';
-import { Editor, EditorState } from "react-draft-wysiwyg";
-import dayjs from "dayjs";
+import {EditorState} from 'draft-js'
+import { Editor } from "react-draft-wysiwyg";
+import dayjs, { Dayjs } from "dayjs";
 import { stateFromHTML } from "draft-js-import-html";
 import { DateFormat } from "../../constants/Date";
 import { UseGoogleSchedulesAddModalEvent } from "../../hooks/UseGoogleSchedulesAddModalEvent";
@@ -15,9 +16,8 @@ import { UseGoogleSchedulesAddModalEvent } from "../../hooks/UseGoogleSchedulesA
 type Props = {
     openFlag:boolean,
     setOpenFlag:Dispatch<SetStateAction<boolean>>
-    setDetailFlag:Dispatch<SetStateAction<boolean>>
     setReloadFlag:Dispatch<SetStateAction<number>>
-    googleSchedule?:GoogleSchedule | null
+    day:Dayjs
     eventColors:EventColors
 }
 
@@ -31,9 +31,9 @@ function GoogleSchedulesAddModal(props:Props){
     const dateRef = useRef<any>(null);
     const startTimeRef = useRef<any>(null);
     const endTimeRef = useRef<any>(null);
-    const [description,setDescription] = useState<any>(props.googleSchedule?.description);
+    const [description,setDescription] = useState<string>("");
 
-    const elementStore = description ? EditorState.createWithContent(stateFromHTML(description)) : EditorState.createEmpty();
+    const elementStore = EditorState.createEmpty();
     const [successSnackBarOpen,setSuccessSnackBarOpen] = useState<boolean>(false);
     const [errorSnackBarOpen,setErrorSnackBarOpen] = useState<boolean>(false);
     const [timeError,setTimeError] = useState<boolean>(false);
@@ -55,16 +55,12 @@ function GoogleSchedulesAddModal(props:Props){
     }
 
     //タイトル(summary)
-    const summary:string = props?.googleSchedule?.summary ? props.googleSchedule.summary : "";
-    const startYYYYMMDD:string= props?.googleSchedule?.start ? dayjs(props.googleSchedule.start).format(DateFormat.YYYYMMDD) : "";
-    const startHHmm:string = props?.googleSchedule?.start ? dayjs(props.googleSchedule.start).format(DateFormat.HHmm) : "";
-    const backgroundColor:string = props?.googleSchedule?.backgroundColor ? props.googleSchedule.backgroundColor : "";
+    const startYYYYMMDD:string= props.day.format(DateFormat.YYYYMMDD);
 
     let [event] = UseGoogleSchedulesAddModalEvent(
         props.openFlag,
         description,
         props.setOpenFlag,
-        props.setDetailFlag,
         props.setReloadFlag,
         setDescription,
         setTimeError,
@@ -76,8 +72,7 @@ function GoogleSchedulesAddModal(props:Props){
         dateRef,
         startTimeRef,
         endTimeRef,
-        elementStore,
-        props?.googleSchedule
+        elementStore
     );
 
     return(
@@ -115,7 +110,6 @@ function GoogleSchedulesAddModal(props:Props){
                               label="タイトル" 
                               variant="outlined"
                               inputRef={summaryInputRef}
-                              defaultValue={summary}
                               fullWidth
                               size="small"
                               onChange={(e) => event.summaryChange(e)}
@@ -135,7 +129,6 @@ function GoogleSchedulesAddModal(props:Props){
                                 <TextField
                                     error={timeError}
                                     type="time"
-                                    defaultValue={startHHmm}
                                     size="small"
                                     inputRef={startTimeRef}
                                     inputProps={{min:"00:00"}}
@@ -146,7 +139,6 @@ function GoogleSchedulesAddModal(props:Props){
                                 <TextField 
                                     error={timeError}
                                     type="time"
-                                    defaultValue={startHHmm}
                                     size="small"
                                     inputRef={endTimeRef}
                                     inputProps={{max:"23:59"}}
@@ -162,7 +154,6 @@ function GoogleSchedulesAddModal(props:Props){
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     label="color"
-                                    defaultValue={backgroundColor}
                                     size="small"
                                     inputProps={{maxWidth:"20px"}}
                                     inputRef={colorSelectRef}

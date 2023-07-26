@@ -18,7 +18,6 @@ export const UseGoogleSchedulesAddModalEvent = (
     openFlag:boolean,
     description:any,
     setOpenFlag:Dispatch<SetStateAction<boolean>>,
-    setDetailFlag:Dispatch<SetStateAction<boolean>>,
     setReloadFlag:Dispatch<SetStateAction<number>>,
     setDescription:Dispatch<SetStateAction<string>>,
     setTimeError:Dispatch<SetStateAction<boolean>>,
@@ -31,7 +30,6 @@ export const UseGoogleSchedulesAddModalEvent = (
     startTimeRef:RefObject<any>,
     endTimeRef:RefObject<any>,
     elementStore:EditorState,
-    googleSchedule?:GoogleSchedule | null | undefined
 ): [GoogleSchedulesEditModalEvent] => {
     
     /**
@@ -39,7 +37,7 @@ export const UseGoogleSchedulesAddModalEvent = (
      * @param e 
      */
     const summaryChange = (e:any) => {
-        if(summaryInputRef?.current?.value && googleSchedule?.summary){
+        if(summaryInputRef?.current?.value){
             summaryInputRef.current.value = e.target.value;
         }
     }
@@ -97,7 +95,7 @@ export const UseGoogleSchedulesAddModalEvent = (
         //色
         let colorId:string | null = null;
         //イベントID
-        let eventId = googleSchedule?.eventId;
+        // let eventId = googleSchedule?.eventId;
 
         if(summaryInputRef?.current?.value){
             summary = summaryInputRef.current.value;
@@ -114,7 +112,6 @@ export const UseGoogleSchedulesAddModalEvent = (
         }
 
         let req = {
-            eventId:eventId,
             requestBody:{
                 summary:summary,
                 colorId:colorId,
@@ -133,14 +130,12 @@ export const UseGoogleSchedulesAddModalEvent = (
         let backendUrl:string | undefined = process.env.REACT_APP_BACKEND_URL;
         try{
             //更新処理
-            let res = await axios.post(backendUrl + "calendars/regist",req);
+            let res = await axios.post(backendUrl + "calendars/insert",req);
             console.info("カレンダー登録処理",res);
             setSuccessSnackBarOpen(true);
 
             //編集モーダルを閉じる
             editModalClose();
-            //詳細モーダルを閉じる
-            setDetailFlag(false);
             //画面ロード
             setReloadFlag(2);
         } catch(error:any){

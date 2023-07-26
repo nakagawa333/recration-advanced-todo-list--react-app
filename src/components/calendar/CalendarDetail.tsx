@@ -5,12 +5,14 @@ import TableRow from '@mui/material/TableRow';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Chip, TableBody, Typography} from '@mui/material';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { DateFormat } from '../../constants/Date';
 import { GoogleSchedule } from '../../types/googleSchedule';
 import { Dispatch, SetStateAction, useState } from 'react';
 import GoogleSchedulesDetailModal from '../modal/GoogleSchedulesDetailModal';
 import { EventColors } from '../../types/eventColors';
+import GoogleSchedulesAddModal from '../modal/GoogleSchedulesAddModal';
+import { UseCalendarDetailEvent } from '../../hooks/UseCalendarDetailEvent';
 
 type Props = {
     yearNum:string //年号
@@ -30,32 +32,35 @@ type Props = {
     getNowDayInfo:(startDay:Dayjs,endDay:Dayjs,now:Dayjs) => void;
 }
 
+
 //カレンダー詳細
 function CalendarDetail(props:Props){
-    const [openFlag,setOpenFlag] = useState<boolean>(false);
+    //詳細モーダル 表示フラグ
+    const [openCalendarDetailFlag,setOpenCalendarDetailFlag] = useState<boolean>(false);
+    //Googleカレンダー新規作成フラグ
+    const [openGoogleCalendarFlag,setOpenGoogleCalendarFlag] = useState<boolean>(false);
     const [googleSchedule,setGoogleSchedule] = useState<GoogleSchedule | null>(null);
-    const [day,setDay] = useState<Dayjs | null>(null);
-    /**
-     * サマリークリック時   
-     * @param e イベント
-     * @param googleSchedule Googleスケジュール情報 
-     * @param day 日時情報
-     */
-    const summaryClick = (event:any,googleSchedule:GoogleSchedule,day:Dayjs) => {
-        //イベントの伝播を中断
-        event.stopPropagation();
-        setGoogleSchedule(googleSchedule);
-        setOpenFlag(true);
-        setDay(day);
-    }
+    const [day,setDay] = useState<Dayjs>(dayjs());
+
+    const [selectDay,setSelectDay] = useState<Dayjs>(dayjs());
+
+    const [event] = UseCalendarDetailEvent(setDay,setSelectDay,setOpenGoogleCalendarFlag,setGoogleSchedule,setOpenCalendarDetailFlag);
     return(
         <>
             <GoogleSchedulesDetailModal 
-              openFlag={openFlag}
-              setOpenFlag={setOpenFlag}
+              openFlag={openCalendarDetailFlag}
+              setOpenFlag={setOpenCalendarDetailFlag}
               setReloadFlag={props.setReloadFlag}
               googleSchedule={googleSchedule}
               day={day}
+              eventColors={props.eventColors}
+            />
+
+            <GoogleSchedulesAddModal
+              openFlag={openGoogleCalendarFlag}
+              setOpenFlag={setOpenGoogleCalendarFlag}
+              setReloadFlag={props.setReloadFlag}
+              day={selectDay}
               eventColors={props.eventColors}
             />
             <Box>
@@ -79,10 +84,6 @@ function CalendarDetail(props:Props){
                             </ArrowForwardIcon>
                         </Box>  
                     </Box>
-
-                    {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateCalendar />
-                    </LocalizationProvider> */}
                 </Box>
             </Box>
 
@@ -112,7 +113,7 @@ function CalendarDetail(props:Props){
                                                     }} 
                                                     key={j}
                                                     align="center"
-                                                    onClick={() => alert("hello")}
+                                                    onClick={() => event.openGoogleCalendar(day)}
                                                 >
                                                     {
                                                         props.googleSchedulesMap?.has(day.format(DateFormat.YYYYMMDD)) 
@@ -122,7 +123,7 @@ function CalendarDetail(props:Props){
                                                                     <Box>
                                                                         <Chip 
                                                                         label={googleSchedule.summary} 
-                                                                        onClick={(e) => summaryClick(e,googleSchedule,day)} 
+                                                                        onClick={(e) => event.summaryClick(e,googleSchedule,day)} 
                                                                         style={{background:googleSchedule.backgroundColor}}
                                                                         />
                                                                     </Box>
@@ -130,7 +131,7 @@ function CalendarDetail(props:Props){
                                                             }
                                                             
                                                             return(
-                                                                <Typography onClick={(e) => summaryClick(e,googleSchedule,day)}>{googleSchedule.summary}</Typography>                                                                
+                                                                <Typography onClick={(e) => event.summaryClick(e,googleSchedule,day)}>{googleSchedule.summary}</Typography>                                                                
                                                             )                                                            
                                                         })
                                                     }
