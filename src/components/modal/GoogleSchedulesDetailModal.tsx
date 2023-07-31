@@ -20,6 +20,7 @@ import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
 import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
 import { EventColors } from "../../types/eventColors";
 import GoogleSchedulesEditModal from "./GoogleSchedulesEditModal";
+import GoogleSchedulesDuplicateModal from "./GoogleSchedulesDuplicateModal";
 
 type Props = {
   openFlag:boolean,
@@ -30,11 +31,13 @@ type Props = {
   eventColors:EventColors
 }
 
+//googleカレンダー詳細モーダル
 function GoogleSchedulesDetailModal(props:Props){
   const [successSnackBarOpen,setSuccessSnackBarOpen] = useState<boolean>(false);
   const [errorSnackBarOpen,setErrorSnackBarOpen] = useState<boolean>(false);
 
   const [editOpenFlag,setEditOpenFlag] = useState<boolean>(false);
+  const [editDuplicateFlag,setEditDuplicateFlag] = useState<boolean>(false);
   const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -67,6 +70,13 @@ function GoogleSchedulesDetailModal(props:Props){
   const editClick = () => {
     //編集モーダルを開く
     setEditOpenFlag(true);
+  }
+
+  /**
+   * 複製クリック
+   */
+  const duplicateClick = () => {
+    setEditDuplicateFlag(true);
   }
 
   /**
@@ -123,6 +133,15 @@ function GoogleSchedulesDetailModal(props:Props){
           googleSchedule={props.googleSchedule}
           eventColors={props.eventColors}
         />
+
+        <GoogleSchedulesDuplicateModal
+          openFlag={editDuplicateFlag}
+          setOpenFlag={setEditDuplicateFlag}
+          setDetailFlag={props.setOpenFlag}
+          setReloadFlag={props.setReloadFlag}
+          googleSchedule={props.googleSchedule}
+          eventColors={props.eventColors}        
+        />
         
         {
           props.openFlag
@@ -145,8 +164,9 @@ function GoogleSchedulesDetailModal(props:Props){
                 <Tooltip title="複製">
                    <IconButton>
                     <ContentCopyIcon
+                      onClick={duplicateClick}
                     />
-                  </IconButton>                  
+                  </IconButton>
                 </Tooltip>
 
                 <Tooltip title="削除">
