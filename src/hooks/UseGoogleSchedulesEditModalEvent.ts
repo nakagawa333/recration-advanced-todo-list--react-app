@@ -6,6 +6,7 @@ import { EditorState } from "react-draft-wysiwyg";
 import axios from "axios";
 import { Day } from "../common/Day";
 import dayjs from "dayjs";
+import { ReloadFlag } from "../types/reloadFlag";
 
 type GoogleSchedulesEditModalEvent = {
     onClose:() => void;
@@ -19,7 +20,7 @@ export const UseGoogleSchedulesEditModalEvent = (
     description:any,
     setOpenFlag:Dispatch<SetStateAction<boolean>>,
     setDetailFlag:Dispatch<SetStateAction<boolean>>,
-    setReloadFlag:Dispatch<SetStateAction<number>>,
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>,
     setDescription:Dispatch<SetStateAction<string>>,
     setTimeError:Dispatch<SetStateAction<boolean>>,
     setSuccessSnackBarOpen:Dispatch<SetStateAction<boolean>>,

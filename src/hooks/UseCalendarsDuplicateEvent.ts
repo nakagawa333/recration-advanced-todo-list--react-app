@@ -5,6 +5,7 @@ import { stateToHTML } from "draft-js-export-html";
 import { Day } from "../common/Day";
 import dayjs from "dayjs";
 import axios from "axios";
+import { ReloadFlag } from "../types/reloadFlag";
 
 type CalendarsDuplicateEvent = {
     onClose:() => void;
@@ -18,7 +19,7 @@ export const UseCalendarsDuplicateEvent = (
     description:any,
     setOpenFlag:Dispatch<SetStateAction<boolean>>,
     setDetailFlag:Dispatch<SetStateAction<boolean>>,
-    setReloadFlag:Dispatch<SetStateAction<number>>,
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>,
     setDescription:Dispatch<SetStateAction<string>>,
     setTimeError:Dispatch<SetStateAction<boolean>>,
     setSuccessSnackBarOpen:Dispatch<SetStateAction<boolean>>,

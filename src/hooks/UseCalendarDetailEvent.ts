@@ -1,6 +1,7 @@
 import { Dayjs } from "dayjs";
 import { GoogleSchedule } from "../types/googleSchedule";
 import { Dispatch, SetStateAction } from "react";
+import { ReloadFlag } from "../types/reloadFlag";
 
 type CalendarDetailEvent = {
     openGoogleCalendar: (day:Dayjs) => void;
@@ -15,7 +16,7 @@ export const UseCalendarDetailEvent  = (
     setOpenGoogleCalendarFlag:Dispatch<SetStateAction<boolean>>,
     setGoogleSchedule:Dispatch<SetStateAction<GoogleSchedule | null>>,
     setOpenCalendarDetailFlag:Dispatch<SetStateAction<boolean>>,
-    setReloadFlag:Dispatch<SetStateAction<number>>,
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>,
     getPreAfterDayInfo:(targetBeginMonth:Dayjs,eventType:number) => void,
     targetBeginMonth:Dayjs
 ): [CalendarDetailEvent] => {

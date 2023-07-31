@@ -19,12 +19,13 @@ import SucessSnackbar from "../shared/SucessSnackbar";
 import { Day } from "../../common/Day";
 import { UseGoogleSchedulesEditModalEvent } from "../../hooks/UseGoogleSchedulesEditModalEvent";
 import { monitorEventLoopDelay } from "perf_hooks";
+import { ReloadFlag } from "../../types/reloadFlag";
 
 type Props = {
     openFlag:boolean,
     setOpenFlag:Dispatch<SetStateAction<boolean>>
     setDetailFlag:Dispatch<SetStateAction<boolean>>
-    setReloadFlag:Dispatch<SetStateAction<number>>
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>
     googleSchedule:GoogleSchedule | null
     eventColors:EventColors
 }

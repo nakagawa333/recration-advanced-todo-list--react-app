@@ -15,6 +15,7 @@ import { DateFormat } from '../../constants/Date';
 import CircularIndeterminate from '../circular/CircularIndeterminate';
 import CalendarDetail from './CalendarDetail';
 import { EventColors } from '../../types/eventColors';
+import { ReloadFlag } from '../../types/reloadFlag';
 
 
 type Props = {
@@ -53,7 +54,7 @@ function Calendar(props:Props){
         setStartDay,setEndDay,setYearNum,setGoogleSchedulesMap,
         setShowCircularFlag,setEventColors);
     
-    const [reloadFlag,setReloadFlag] = useState<number>(0);
+    const [reloadFlag,setReloadFlag] = useState<ReloadFlag>(0);
 
     useLayoutEffect(() => {
         const f = async() => {

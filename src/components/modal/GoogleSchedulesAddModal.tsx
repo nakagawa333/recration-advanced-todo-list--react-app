@@ -11,12 +11,13 @@ import dayjs, { Dayjs } from "dayjs";
 import { stateFromHTML } from "draft-js-import-html";
 import { DateFormat } from "../../constants/Date";
 import { UseGoogleSchedulesAddModalEvent } from "../../hooks/UseGoogleSchedulesAddModalEvent";
+import { ReloadFlag } from "../../types/reloadFlag";
 
 
 type Props = {
     openFlag:boolean,
     setOpenFlag:Dispatch<SetStateAction<boolean>>
-    setReloadFlag:Dispatch<SetStateAction<number>>
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>
     day:Dayjs
     eventColors:EventColors
 }

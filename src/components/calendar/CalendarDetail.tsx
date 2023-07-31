@@ -13,6 +13,7 @@ import GoogleSchedulesDetailModal from '../modal/GoogleSchedulesDetailModal';
 import { EventColors } from '../../types/eventColors';
 import GoogleSchedulesAddModal from '../modal/GoogleSchedulesAddModal';
 import { UseCalendarDetailEvent } from '../../hooks/UseCalendarDetailEvent';
+import { ReloadFlag } from '../../types/reloadFlag';
 
 type Props = {
     yearNum:string //年号
@@ -25,7 +26,7 @@ type Props = {
     publicHoliday:any
     googleSchedulesMap:Map<string, GoogleSchedule[]> | undefined
     setDetailModalFlag:Dispatch<SetStateAction<boolean>>
-    setReloadFlag:Dispatch<SetStateAction<number>>
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>
     getPreAfterDayInfo:(targetBeginMonth:Dayjs,eventType:number) => void;
     getColor: (day:Dayjs,publicHoliday:any) => string;
     getBackGroudColor: (day:Dayjs,now:Dayjs) => string;

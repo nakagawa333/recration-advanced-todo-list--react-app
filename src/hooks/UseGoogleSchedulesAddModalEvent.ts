@@ -6,6 +6,7 @@ import { Dispatch, RefObject, SetStateAction } from "react";
 import { GoogleSchedule } from "../types/googleSchedule";
 import { EventColors } from "../types/eventColors";
 import { EditorState } from "react-draft-wysiwyg";
+import { ReloadFlag } from "../types/reloadFlag";
 
 type GoogleSchedulesEditModalEvent = {
     onClose:() => void;
@@ -18,7 +19,7 @@ export const UseGoogleSchedulesAddModalEvent = (
     openFlag:boolean,
     description:any,
     setOpenFlag:Dispatch<SetStateAction<boolean>>,
-    setReloadFlag:Dispatch<SetStateAction<number>>,
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>,
     setDescription:Dispatch<SetStateAction<string>>,
     setTimeError:Dispatch<SetStateAction<boolean>>,
     setSuccessSnackBarOpen:Dispatch<SetStateAction<boolean>>,

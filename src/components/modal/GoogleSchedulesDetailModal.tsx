@@ -21,11 +21,12 @@ import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded
 import { EventColors } from "../../types/eventColors";
 import GoogleSchedulesEditModal from "./GoogleSchedulesEditModal";
 import GoogleSchedulesDuplicateModal from "./GoogleSchedulesDuplicateModal";
+import { ReloadFlag } from "../../types/reloadFlag";
 
 type Props = {
   openFlag:boolean,
   setOpenFlag:Dispatch<SetStateAction<boolean>>
-  setReloadFlag:Dispatch<SetStateAction<number>>
+  setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>
   googleSchedule:GoogleSchedule | null
   day:Dayjs | null
   eventColors:EventColors
