@@ -44,7 +44,17 @@ function CalendarDetail(props:Props){
 
     const [selectDay,setSelectDay] = useState<Dayjs>(dayjs());
 
-    const [event] = UseCalendarDetailEvent(setDay,setSelectDay,setOpenGoogleCalendarFlag,setGoogleSchedule,setOpenCalendarDetailFlag);
+    const [event] = UseCalendarDetailEvent(
+        setDay,
+        setSelectDay,
+        setOpenGoogleCalendarFlag,
+        setGoogleSchedule,
+        setOpenCalendarDetailFlag,
+        props.setReloadFlag,
+        props.getPreAfterDayInfo,
+        props.targetBeginMonth
+    );
+
     return(
         <>
             <GoogleSchedulesDetailModal 
@@ -72,7 +82,7 @@ function CalendarDetail(props:Props){
                     <Box style={{display:"flex",margin:"auto"}}>
                         <Box style={{marginTop:"15px",marginRight:"20px"}}>
                         <ArrowBackIcon 
-                        onClick={() => props.getPreAfterDayInfo(props.targetBeginMonth,1)}></ArrowBackIcon>
+                        onClick={() => event.arrowBackIconClick()}></ArrowBackIcon>
                         </Box>
                         
                         <p>{props.startDay.year()}年</p>
@@ -80,7 +90,7 @@ function CalendarDetail(props:Props){
 
                         <Box style={{marginTop:"15px",marginLeft:"20px"}}>
                             <ArrowForwardIcon 
-                            onClick={() => props.getPreAfterDayInfo(props.targetBeginMonth,2)}>
+                            onClick={() => event.arrowForwardIconClick()}>
                             </ArrowForwardIcon>
                         </Box>  
                     </Box>

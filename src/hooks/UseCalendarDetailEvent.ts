@@ -5,6 +5,8 @@ import { Dispatch, SetStateAction } from "react";
 type CalendarDetailEvent = {
     openGoogleCalendar: (day:Dayjs) => void;
     summaryClick: (event:any,googleSchedule:GoogleSchedule,day:Dayjs) => void;
+    arrowBackIconClick: () => void;
+    arrowForwardIconClick:() => void;
 }
 
 export const UseCalendarDetailEvent  = (
@@ -12,7 +14,10 @@ export const UseCalendarDetailEvent  = (
     setSelectDay:Dispatch<SetStateAction<Dayjs>>,
     setOpenGoogleCalendarFlag:Dispatch<SetStateAction<boolean>>,
     setGoogleSchedule:Dispatch<SetStateAction<GoogleSchedule | null>>,
-    setOpenCalendarDetailFlag:Dispatch<SetStateAction<boolean>>
+    setOpenCalendarDetailFlag:Dispatch<SetStateAction<boolean>>,
+    setReloadFlag:Dispatch<SetStateAction<number>>,
+    getPreAfterDayInfo:(targetBeginMonth:Dayjs,eventType:number) => void,
+    targetBeginMonth:Dayjs
 ): [CalendarDetailEvent] => {
     /**
      * Googleカレンダー追加モーダルを開く
@@ -34,7 +39,25 @@ export const UseCalendarDetailEvent  = (
         setGoogleSchedule(googleSchedule);
         setOpenCalendarDetailFlag(true);
         setDay(day);
-    }    
-    return [{openGoogleCalendar,summaryClick}];
+    }
+
+    /**
+     * 後方矢印クリックイベント
+     */
+    const arrowBackIconClick = () => {
+        getPreAfterDayInfo(targetBeginMonth,1);
+        setReloadFlag(2);
+    }
+
+    /**
+     * 前方矢印クリックイベント
+     */
+    const arrowForwardIconClick = () => {
+        getPreAfterDayInfo(targetBeginMonth,2);
+        setReloadFlag(2);
+    }
+
+
+    return [{openGoogleCalendar,summaryClick,arrowBackIconClick,arrowForwardIconClick}];
 }
 
