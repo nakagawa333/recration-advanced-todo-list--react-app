@@ -27,7 +27,7 @@ function Home(){
                setHoliday={setHoliday}           
             />
             <ContentHeader
-              contentTitle="Today's todo"
+              contentTitle="This is Month's todo"
               filtername="priority"
               filterItems={filterItems}
             />

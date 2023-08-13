@@ -134,8 +134,6 @@ export const UseCalendarsEvent = (
         setCalendars(thisCalendars);
         //年号更新
         setYearNum(thisTargetBeginMonth.toDate().toLocaleString( "ja-JP-u-ca-japanese" ,{ era : "short" }).split("/")[0]);
-        //スケジュール情報を取得する
-        getSchedules(thisStartDay,thisEndDay);
         setShowCircularFlag(false);
     }
 

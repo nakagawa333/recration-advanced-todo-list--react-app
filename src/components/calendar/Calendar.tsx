@@ -58,12 +58,28 @@ function Calendar(props:Props){
 
     useLayoutEffect(() => {
         const f = async() => {
-            if(reloadFlag === 0 || reloadFlag === 2){
+            if(reloadFlag === 0){
                 setShowCircularFlag(true);
                 await Promise.all(([calendarsEvent.getSchedules(startDay,endDay),
                     calendarsEvent.getPublicHoliday(now.year()),
                     calendarsEvent.getNowDayInfo(startDay,endDay,now)  //現在の時刻データを取得する
                 ]))
+                .then((values:any) => {
+                     console.info("処理に成功しました");
+                })
+                .catch((error:any) => {
+                    console.error(error);
+                })
+                .finally(() => {
+                    setShowCircularFlag(false);
+                    setReloadFlag(1);
+                })
+            } else if(reloadFlag === 2){
+                setShowCircularFlag(true);
+                await Promise.all([
+                    calendarsEvent.getSchedules(startDay,endDay),
+                    calendarsEvent.getPublicHoliday(now.year()),
+                ])
                 .then((values:any) => {
                      console.info("処理に成功しました");
                 })
