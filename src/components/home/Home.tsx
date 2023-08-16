@@ -4,12 +4,13 @@ import Header from "../shared/Header"
 import Calendar from "../calendar/Calendar";
 import { useState } from "react";
 import Todo from "../todo/Todo";
+import { GoogleSchedule } from "../../types/googleSchedule";
 
 function Home(){
 
   const filterItems:string[] = ["月","日"];
 
-  const [googleSchedules,setGoogleShedules] = useState<any[]>([]);
+  const [googleSchedules,setGoogleShedules] = useState<GoogleSchedule[]>([]);
   const [holiday,setHoliday] = useState<any[]>([]);
     return(
         <>

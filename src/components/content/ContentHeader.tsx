@@ -1,4 +1,4 @@
-import { Box, FormControl, InputLabel, Menu, MenuItem, Select, Typography } from "@mui/material"
+import { Box,Typography } from "@mui/material"
 
 type Props = {
     contentTitle:string,
