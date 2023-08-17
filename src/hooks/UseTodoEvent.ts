@@ -4,11 +4,12 @@ import { Dispatch, SetStateAction } from "react";
 import { Api } from "../constants/Api";
 import { Axios } from "../common/Axios";
 import { ReloadFlag } from "../types/reloadFlag";
+import { GoogleSchedule } from "../types/googleSchedule";
 
 type TodoEvent = {
     createTwoDimensionalArr:(arr:any[],num:number) => any[][];
-    editClick:() => void;
-    duplicateClick:() => void;
+    editClick:(googleSchedule:GoogleSchedule) => void;
+    duplicateClick:(googleSchedule:GoogleSchedule) => void;
     deleteIconClick:(eventId:string) => void;
 }
 
@@ -17,14 +18,15 @@ export const UseTodoEvent = (
     setErrorSnackBarOpen:Dispatch<SetStateAction<boolean>>,
     setEditOpenFlag:Dispatch<SetStateAction<boolean>>,
     setEditDuplicateFlag:Dispatch<SetStateAction<boolean>>,
-    setShowCircularFlag:Dispatch<SetStateAction<boolean>>,
-    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>,
+    setGoogleSchedule:Dispatch<SetStateAction<GoogleSchedule | null>>
 ):[TodoEvent] =>
 {
     /**
      * 編集クリック
      */
-    const editClick = () => {
+    const editClick = (googleSchedule:GoogleSchedule) => {
+        setGoogleSchedule(googleSchedule);
         //編集モーダルを開く
         setEditOpenFlag(true);
     }
@@ -32,7 +34,8 @@ export const UseTodoEvent = (
     /**
      * 複製クリック
      */
-    const duplicateClick = () => {
+    const duplicateClick = (googleSchedule:GoogleSchedule) => {
+        setGoogleSchedule(googleSchedule);
         setEditDuplicateFlag(true);
     }
 

@@ -128,10 +128,11 @@ function Calendar(props:Props){
         />
         
         <Todo
-            schedules={googleSchedules}
+            googleSchedules={googleSchedules}
             showCircularFlag={showCircularFlag}
             setShowCircularFlag={setShowCircularFlag}
             setReloadFlag={setReloadFlag}
+            eventColors={eventColors}
         />
 
         </>

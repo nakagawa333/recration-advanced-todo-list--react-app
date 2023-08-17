@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Typography from "@mui/material/Typography/Typography";
 import CalendarMonthSharpIcon from '@mui/icons-material/CalendarMonthSharp';
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { DateFormat } from "../../constants/Date";
 import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
 import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
@@ -23,13 +23,19 @@ import SucessSnackbar from "../shared/SucessSnackbar";
 import ErrorSnackbar from "../shared/ErrorSnackbar";
 import CircularIndeterminate from "../circular/CircularIndeterminate";
 import { ReloadFlag } from "../../types/reloadFlag";
+import GoogleSchedulesDetailModal from "../modal/GoogleSchedulesDetailModal";
+import GoogleSchedulesAddModal from "../modal/GoogleSchedulesAddModal";
+import { EventColors } from "../../types/eventColors";
+import GoogleSchedulesDuplicateModal from "../modal/GoogleSchedulesDuplicateModal";
+import GoogleSchedulesEditModal from "../modal/GoogleSchedulesEditModal";
 
 
 type Props = {
-    schedules:GoogleSchedule[],
+    googleSchedules:GoogleSchedule[],
     showCircularFlag:boolean,
     setShowCircularFlag:Dispatch<SetStateAction<boolean>>
     setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>
+    eventColors:EventColors
 }
 
 function Todo(props:Props){
@@ -39,7 +45,9 @@ function Todo(props:Props){
     const [editOpenFlag,setEditOpenFlag] = useState<boolean>(false);
     const [editDuplicateFlag,setEditDuplicateFlag] = useState<boolean>(false);
 
-    //const [showCircularFlag,setShowCircularFlag] = useState<boolean>(false);
+    const [openFlag,setOpenFlag] = useState<boolean>(false);
+    const [googleSchedule,setGoogleSchedule] = useState<GoogleSchedule | null>(null);
+
     const settings:Settings = {
       dots: true,
       infinite: true,
@@ -58,8 +66,8 @@ function Todo(props:Props){
         setErrorSnackBarOpen,
         setEditOpenFlag,
         setEditDuplicateFlag,
-        props.setShowCircularFlag,
-        props.setReloadFlag
+        props.setReloadFlag,
+        setGoogleSchedule
     );
     
     return (
@@ -78,27 +86,27 @@ function Todo(props:Props){
                 message={"更新に失敗しました"}
             />
             
-            {/* <GoogleSchedulesEditModal
+            <GoogleSchedulesEditModal
                 openFlag={editOpenFlag}
                 setOpenFlag={setEditOpenFlag}
-                setDetailFlag={props.setOpenFlag}
+                setDetailFlag={setOpenFlag}
                 setReloadFlag={props.setReloadFlag}
-                googleSchedule={props.googleSchedule}
+                googleSchedule={googleSchedule}
                 eventColors={props.eventColors}
             />
 
             <GoogleSchedulesDuplicateModal
                 openFlag={editDuplicateFlag}
                 setOpenFlag={setEditDuplicateFlag}
-                setDetailFlag={props.setOpenFlag}
+                setDetailFlag={setOpenFlag}
                 setReloadFlag={props.setReloadFlag}
-                googleSchedule={props.googleSchedule}
-                eventColors={props.eventColors}        
-            /> */}
+                googleSchedule={googleSchedule}
+                eventColors={props.eventColors}      
+            />
 
             <Slider {...settings}>
                 {
-                    event.createTwoDimensionalArr(props.schedules,2).map((schedules:GoogleSchedule[],i:number) => {
+                    event.createTwoDimensionalArr(props.googleSchedules,2).map((schedules:GoogleSchedule[],i:number) => {
                         return(
                             <Box key={i}>
                                 <Box style={{"display":"flex","justifyContent":"space-around"}}>
@@ -111,7 +119,7 @@ function Todo(props:Props){
                                                             <Tooltip title="編集">
                                                                 <IconButton>
                                                                     <EditIcon
-                                                                    onClick={event.editClick}
+                                                                    onClick={() => event.editClick(schedule)}
                                                                     />
                                                                 </IconButton>
                                                                 </Tooltip>
@@ -119,7 +127,7 @@ function Todo(props:Props){
                                                                 <Tooltip title="複製">
                                                                 <IconButton>
                                                                     <ContentCopyIcon
-                                                                    onClick={event.duplicateClick}
+                                                                    onClick={() => event.duplicateClick(schedule)}
                                                                     />
                                                                 </IconButton>
                                                                 </Tooltip>
