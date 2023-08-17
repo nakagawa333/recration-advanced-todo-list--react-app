@@ -1,6 +1,7 @@
 import * as React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import Backdrop from '@mui/material/Backdrop/Backdrop';
 
 type Props = {
     showFlag:boolean //表示フラグ
@@ -9,31 +10,12 @@ type Props = {
 function CircularIndeterminate(props:Props){
     return(
         <>
-            {props.showFlag && 
-                (
-                <Box>
-                    <Box sx={{ display: 'flex',
-                    position: 'absolute',
-                    top:'50%',
-                    left:'50%',
-                    transform: 'translate(-50%, -50%)' }}>
-                    <CircularProgress />
-                    </Box>
-
-                    <Box sx={{opacity:".5",
-                      position: "fixed",
-                      top:"0",
-                      left:"0",
-                      zIndex:"1040",
-                      backgroundColor:"#000",
-                      width:"100vw",
-                      height:"100vh"
-                    }}>
-
-                    </Box>
-                </Box>
-                )
-            }
+          <Backdrop
+            sx={{ color: 'rgba(0, 0, 0, 0.54)', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={props.showFlag}
+           >
+            <CircularProgress color="inherit" />
+           </Backdrop>
         </>
     )
 }
