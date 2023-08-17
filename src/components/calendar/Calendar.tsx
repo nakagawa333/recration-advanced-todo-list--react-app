@@ -16,17 +16,19 @@ import CircularIndeterminate from '../circular/CircularIndeterminate';
 import CalendarDetail from './CalendarDetail';
 import { EventColors } from '../../types/eventColors';
 import { ReloadFlag } from '../../types/reloadFlag';
+import Todo from '../todo/Todo';
+import ContentHeader from '../content/ContentHeader';
 
 
 type Props = {
-    googleSchedules:any[]//Googleカレンダー スケジュール情報
-    setGoogleShedules:Dispatch<SetStateAction<any[]>>
-    setHoliday:Dispatch<SetStateAction<any[]>>
+
 }
 
 function Calendar(props:Props){
     //日本の時刻に変換
     dayjs.locale('ja');
+
+    const [googleSchedules,setGoogleShedules] = useState<GoogleSchedule[]>([]);
     //祝日
     const [publicHoliday,setPublicHoliday] = useState<any>([]);
 
@@ -49,7 +51,7 @@ function Calendar(props:Props){
     const [showCircularFlag,setShowCircularFlag] = useState<boolean>(false);
     const [detailModalFlag,setDetailModalFlag] = useState<boolean>(false);
 
-    const [calendarsEvent] = UseCalendarsEvent(props,
+    const [calendarsEvent] = UseCalendarsEvent(setGoogleShedules,
         setPublicHoliday,setCalendars,setTargetBeginMonth,
         setStartDay,setEndDay,setYearNum,setGoogleSchedulesMap,
         setShowCircularFlag,setEventColors);
@@ -119,6 +121,17 @@ function Calendar(props:Props){
           getColor={calendarsEvent.getColor}
           getBackGroudColor={calendarsEvent.getBackGroudColor}
           getNowDayInfo={calendarsEvent.getNowDayInfo}
+        />
+        
+        <ContentHeader
+              contentTitle="This is Month's todo"
+        />
+        
+        <Todo
+            schedules={googleSchedules}
+            showCircularFlag={showCircularFlag}
+            setShowCircularFlag={setShowCircularFlag}
+            setReloadFlag={setReloadFlag}
         />
 
         </>

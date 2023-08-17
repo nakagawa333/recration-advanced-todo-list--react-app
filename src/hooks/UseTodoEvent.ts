@@ -1,6 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse, HttpStatusCode } from "axios";
 import { Dayjs } from "dayjs";
 import { Dispatch, SetStateAction } from "react";
+import { Api } from "../constants/Api";
+import { Axios } from "../common/Axios";
+import { ReloadFlag } from "../types/reloadFlag";
 
 type TodoEvent = {
     createTwoDimensionalArr:(arr:any[],num:number) => any[][];
@@ -11,8 +14,11 @@ type TodoEvent = {
 
 export const UseTodoEvent = (
     setSuccessSnackBarOpen:Dispatch<SetStateAction<boolean>>,
+    setErrorSnackBarOpen:Dispatch<SetStateAction<boolean>>,
     setEditOpenFlag:Dispatch<SetStateAction<boolean>>,
-    setEditDuplicateFlag:Dispatch<SetStateAction<boolean>>
+    setEditDuplicateFlag:Dispatch<SetStateAction<boolean>>,
+    setShowCircularFlag:Dispatch<SetStateAction<boolean>>,
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>
 ):[TodoEvent] =>
 {
     /**
@@ -36,27 +42,18 @@ export const UseTodoEvent = (
      * @returns 
      */
     const deleteIconClick = async(eventId:string) => {
+        setReloadFlag(2);
         try{
-            let backendUrl:string | undefined = process.env.REACT_APP_BACKEND_URL;
-                if(backendUrl){
-                    let axiosRequestConfig:AxiosRequestConfig = {
-                        data:{
-                            eventId:eventId
-                        }
-                    }
-                    let res:AxiosResponse = await axios.delete(backendUrl + "calendars/delete",axiosRequestConfig);
-                    let body = res.data.body;
-                    if(res.data.statusCode !== HttpStatusCode.Ok){
-                        return;
-                    }
-                    
-                    setSuccessSnackBarOpen(true);
-                    //props.setReloadFlag(2);
-                }
-            } catch(error:any){
-                console.error(error.message,error);
-                console.error("カレンダーの削除に失敗しました");
-            }
+            //setShowCircularFlag(true);
+            await Axios.deleteGoogleSchedule(eventId);
+
+            setSuccessSnackBarOpen(true);
+
+        } catch(error:any){
+            setErrorSnackBarOpen(true);
+            console.error(error.message,error);
+            console.error("カレンダーの削除に失敗しました");
+        }
     }
     
     /**

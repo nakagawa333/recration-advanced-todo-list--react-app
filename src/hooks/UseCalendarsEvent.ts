@@ -14,7 +14,7 @@ type CalendarsEvent = {
 }
 
 export const UseCalendarsEvent = (
-    props:any,
+    setGoogleShedules:Dispatch<SetStateAction<GoogleSchedule[]>>,
     setPublicHoliday:Dispatch<SetStateAction<any[]>>,
     setCalendars:Dispatch<SetStateAction<Dayjs[][] | undefined>>,
     setTargetBeginMonth:Dispatch<SetStateAction<Dayjs>>,
@@ -77,7 +77,7 @@ export const UseCalendarsEvent = (
                     }
                     setGoogleSchedulesMap(googleSchedulesMap);
                     //Googleカレンダー スケジュール情報を取得する
-                    props.setGoogleShedules(googleSchedules);
+                    setGoogleShedules(googleSchedules);
                     //カラー一覧
                     setEventColors(body.eventColors);
                 } catch(error:any){

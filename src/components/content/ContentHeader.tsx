@@ -1,9 +1,7 @@
 import { Box,Typography } from "@mui/material"
 
 type Props = {
-    contentTitle:string,
-    filtername:string,
-    filterItems:string[]
+    contentTitle:string
 }
 
 function ContentHeader(props:Props){

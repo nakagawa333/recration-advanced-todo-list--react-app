@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import React, { useLayoutEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useLayoutEffect, useState } from "react";
 import Slider, { Settings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -19,10 +19,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { UseTodoEvent } from "../../hooks/UseTodoEvent";
 import { GoogleSchedule } from "../../types/googleSchedule";
 import { Day } from "../../common/Day";
+import SucessSnackbar from "../shared/SucessSnackbar";
+import ErrorSnackbar from "../shared/ErrorSnackbar";
+import CircularIndeterminate from "../circular/CircularIndeterminate";
+import { ReloadFlag } from "../../types/reloadFlag";
 
 
 type Props = {
-    schedules:any[]
+    schedules:GoogleSchedule[],
+    showCircularFlag:boolean,
+    setShowCircularFlag:Dispatch<SetStateAction<boolean>>
+    setReloadFlag:Dispatch<SetStateAction<ReloadFlag>>
 }
 
 function Todo(props:Props){
@@ -31,7 +38,8 @@ function Todo(props:Props){
 
     const [editOpenFlag,setEditOpenFlag] = useState<boolean>(false);
     const [editDuplicateFlag,setEditDuplicateFlag] = useState<boolean>(false);
-    
+
+    //const [showCircularFlag,setShowCircularFlag] = useState<boolean>(false);
     const settings:Settings = {
       dots: true,
       infinite: true,
@@ -43,22 +51,51 @@ function Todo(props:Props){
     const style = {
         width: 400,
         height:300
-        // bgcolor: 'background.paper',
-        // border: '2px solid var(--highlight-bg)',
-        // boxShadow: 24,
-        // outline:0,
-        // pt: 2,
-        // px: 4,
-        // pb: 3,
     };
 
     const [event] = UseTodoEvent(
         setSuccessSnackBarOpen,
+        setErrorSnackBarOpen,
         setEditOpenFlag,
         setEditDuplicateFlag,
+        props.setShowCircularFlag,
+        props.setReloadFlag
     );
     
     return (
+        <>
+            <SucessSnackbar  
+                snackBarOpen={successSnackBarOpen}
+                setSnackBarOpen={setSuccessSnackBarOpen}
+                autoHideDuration={3000}
+                message={"更新に成功しました"}             
+            />
+            
+            <ErrorSnackbar 
+                snackBarOpen={errorSnackBarOpen}
+                setSnackBarOpen={setErrorSnackBarOpen}
+                autoHideDuration={3000}
+                message={"更新に失敗しました"}
+            />
+            
+            {/* <GoogleSchedulesEditModal
+                openFlag={editOpenFlag}
+                setOpenFlag={setEditOpenFlag}
+                setDetailFlag={props.setOpenFlag}
+                setReloadFlag={props.setReloadFlag}
+                googleSchedule={props.googleSchedule}
+                eventColors={props.eventColors}
+            />
+
+            <GoogleSchedulesDuplicateModal
+                openFlag={editDuplicateFlag}
+                setOpenFlag={setEditDuplicateFlag}
+                setDetailFlag={props.setOpenFlag}
+                setReloadFlag={props.setReloadFlag}
+                googleSchedule={props.googleSchedule}
+                eventColors={props.eventColors}        
+            /> */}
+
             <Slider {...settings}>
                 {
                     event.createTwoDimensionalArr(props.schedules,2).map((schedules:GoogleSchedule[],i:number) => {
@@ -159,6 +196,7 @@ function Todo(props:Props){
                     })
                 }
             </Slider>
+        </>
     )
 }
 
