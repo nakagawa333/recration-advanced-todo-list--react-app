@@ -87,7 +87,7 @@ function CalendarDetail(props:Props){
                         onClick={() => event.arrowBackIconClick()}></ArrowBackIcon>
                         </Box>
                         
-                        <p>{props.startDay.year()}年</p>
+                        <p>{props.targetBeginMonth.year()}年</p>
                         <p style={{marginLeft:"10px"}}>{props.targetBeginMonth.month() + 1}月</p>
 
                         <Box style={{marginTop:"15px",marginLeft:"20px"}}>
