@@ -2,6 +2,7 @@ import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Chip, TableBody, Typography} from '@mui/material';
@@ -100,16 +101,19 @@ function CalendarDetail(props:Props){
 
             <Box>
                 <TableContainer style={{marginBottom:"30px"}}>
-                    <Table size="medium" style={{border: '1px solid rgba(224, 224, 224, 1)',minHeight:"450px"}}>
-                        <TableRow>
-                            <TableCell style={{color:"red",borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">日</TableCell>
-                            <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">月</TableCell>
-                            <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">火</TableCell>
-                            <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">水</TableCell>
-                            <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">木</TableCell>
-                            <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">金</TableCell>
-                            <TableCell style={{color:"aqua",borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">土</TableCell>
-                        </TableRow>
+                    <Table size="medium" style={{border: '1px solid rgba(224, 224, 224, 1)',
+                        minHeight:"450px",tableLayout: "fixed"}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{color:"red",borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">日</TableCell>
+                                <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">月</TableCell>
+                                <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">火</TableCell>
+                                <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">水</TableCell>
+                                <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">木</TableCell>
+                                <TableCell style={{borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">金</TableCell>
+                                <TableCell style={{color:"aqua",borderRight: '1px solid rgba(224, 224, 224, 1)'}} align="center">土</TableCell>
+                            </TableRow>
+                        </TableHead>
                         {
                         props.calendars && props.calendars.map((dayArr:Dayjs[],index:number) => {
                                 return(
